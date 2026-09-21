@@ -85,14 +85,14 @@ const bump = (delta: number) => {
 }
 
 .field-control:focus-within {
-  border-color: var(--sakura-600);
-  box-shadow: 0 0 0 3px var(--sakura-100);
+  border-color: var(--accent-600);
+  box-shadow: 0 0 0 3px var(--accent-100);
 }
 
 .step {
   border: 0;
-  background: var(--sakura-50);
-  color: var(--sakura-700);
+  background: var(--accent-50);
+  color: var(--accent-700);
   font-size: 1.25rem;
   line-height: 1;
   font-weight: 600;
@@ -102,7 +102,7 @@ const bump = (delta: number) => {
 }
 
 .step:active {
-  background: var(--sakura-100);
+  background: var(--accent-100);
 }
 
 .step:disabled {
@@ -125,7 +125,7 @@ input {
 }
 
 input::placeholder {
-  color: #c9b6b8;
+  color: var(--placeholder);
   font-weight: 500;
 }
 </style>

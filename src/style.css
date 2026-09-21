@@ -1,21 +1,55 @@
+/*
+ * Two palettes, one layout. The accent tokens are swapped by the `data-game`
+ * attribute on the app root, so every component can stay colour-agnostic.
+ */
 :root {
-  /* Farbwelt des Papierbogens: Kirschblütenrosa bis warmes Rot */
-  --sakura-25: #fdf4f5;
-  --sakura-50: #fbeaec;
-  --sakura-100: #f7d6da;
-  --sakura-300: #eba9b3;
-  --sakura-600: #c9566d;
-  --sakura-700: #ae4359;
-  --sakura-800: #8f3247;
+  /* Sakura: cherry blossom pink to warm red */
+  --accent-25: #fdf4f5;
+  --accent-50: #fbeaec;
+  --accent-100: #f7d6da;
+  --accent-300: #eba9b3;
+  --accent-600: #c9566d;
+  --accent-700: #ae4359;
+  --accent-800: #8f3247;
+  --backdrop-top: #e59aaa;
+  --backdrop-mid: #d8707b;
+  --backdrop-bottom: #c9566d;
+  --hatch-a: #f3e6e7;
+  --hatch-b: #fbf4f4;
 
   --ink: #3f2b2f;
   --ink-soft: #8a7074;
   --line: #ecd9dc;
   --line-soft: #f2e4e6;
+  --placeholder: #c9b6b8;
+  --muted: #b9a7a9;
 
   color-scheme: light;
   font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
   color: var(--ink);
+}
+
+/* Classic: meadow green, as on the printed pad of the base game */
+[data-game='classic'] {
+  --accent-25: #f4f8ef;
+  --accent-50: #eaf2e0;
+  --accent-100: #d7e8c4;
+  --accent-300: #a9cd80;
+  --accent-600: #5d9430;
+  --accent-700: #4a7a26;
+  --accent-800: #37601d;
+  --backdrop-top: #a7ce74;
+  --backdrop-mid: #7fb44b;
+  --backdrop-bottom: #5d9430;
+  --hatch-a: #e6efdd;
+  --hatch-b: #f5f9f1;
+
+  --ink: #2f3626;
+  --ink-soft: #6f7a62;
+  --line: #dbe6cd;
+  --line-soft: #e8f0de;
+  --placeholder: #b6c2a6;
+  --muted: #a8b499;
 }
 
 * {
@@ -29,8 +63,27 @@ body {
 }
 
 body {
-  background: linear-gradient(170deg, #e59aaa 0%, #d8707b 45%, #c9566d 100%) fixed;
+  background: var(--page-bg, linear-gradient(170deg, #e59aaa 0%, #d8707b 45%, #c9566d 100%)) fixed;
   -webkit-text-size-adjust: 100%;
+}
+
+/* The gradient lives on the body, which cannot see the app's data attribute –
+   so the app paints its own ground and the body only provides the fallback. */
+.app {
+  position: relative;
+}
+
+.app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    170deg,
+    var(--backdrop-top) 0%,
+    var(--backdrop-mid) 45%,
+    var(--backdrop-bottom) 100%
+  );
 }
 
 h1,
@@ -42,7 +95,7 @@ h2 {
   background: #fff;
   border-radius: 1rem;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(110, 40, 55, 0.14);
+  box-shadow: 0 6px 18px rgba(60, 50, 30, 0.14);
 }
 
 .panel-head {
@@ -51,7 +104,7 @@ h2 {
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.7rem 0.85rem;
-  background: var(--sakura-600);
+  background: var(--accent-600);
   color: #fff;
 }
 

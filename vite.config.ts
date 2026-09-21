@@ -9,9 +9,9 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'icon-192.png', 'icon-512.png'],
       manifest: {
-        name: 'Dorfromantik Sakura – Score Pad',
-        short_name: 'Sakura',
-        description: 'Digital score pad for Dorfromantik: Sakura',
+        name: 'Dorfromantik – Score Pad',
+        short_name: 'Dorfromantik',
+        description: 'Digital score pad for Dorfromantik: The Board Game and Dorfromantik: Sakura',
         lang: 'en',
         theme_color: '#c9566d',
         background_color: '#f6dfe1',

@@ -1,9 +1,14 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import NumberField from './NumberField.vue'
 import { t } from '../lib/i18n'
-import { UNLOCKS, type Sheet, type Totals } from '../lib/scoring'
+import type { Game } from '../lib/games'
+import { activeUnlocks, type Sheet, type Totals } from '../lib/scoring'
 
-defineProps<{ sheet: Sheet; totals: Totals }>()
+const props = defineProps<{ game: Game; sheet: Sheet; totals: Totals }>()
+
+const text = computed(() => t.value.games[props.game.id])
+const unlocks = computed(() => activeUnlocks(props.game, props.sheet))
 </script>
 
 <template>
@@ -17,7 +22,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 
     <ul class="unlocks">
       <li
-        v-for="unlock in UNLOCKS"
+        v-for="unlock in unlocks"
         :key="unlock.id"
         class="unlock"
         :class="{ active: sheet.unlocks[unlock.id].enabled }"
@@ -25,8 +30,8 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
         <label class="unlock-head">
           <input v-model="sheet.unlocks[unlock.id].enabled" type="checkbox" class="dot" />
           <span class="unlock-text">
-            <span class="unlock-name">{{ t.unlocks[unlock.id].label }}</span>
-            <span class="unlock-hint">{{ t.unlocks[unlock.id].hint }}</span>
+            <span class="unlock-name">{{ text.unlocks[unlock.id].label }}</span>
+            <span class="unlock-hint">{{ text.unlocks[unlock.id].hint }}</span>
           </span>
           <span v-if="sheet.unlocks[unlock.id].enabled" class="unlock-sum">
             {{ totals.perUnlock[unlock.id] }}
@@ -37,7 +42,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
           <div v-for="(field, index) in unlock.fields" :key="index" class="unlock-field">
             <NumberField
               v-model="sheet.unlocks[unlock.id].values[index]"
-              :label="t.unlocks[unlock.id].fields[index]"
+              :label="text.unlocks[unlock.id].fields[index]"
               :max="field.max ?? 999"
             />
             <p v-if="field.factor !== null" class="calc">
@@ -68,7 +73,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 }
 
 .unlock.active {
-  background: var(--sakura-25);
+  background: var(--accent-25);
 }
 
 .unlock-head {
@@ -86,7 +91,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   width: 1.3rem;
   height: 1.3rem;
   flex: none;
-  border: 2px solid var(--sakura-300);
+  border: 2px solid var(--accent-300);
   border-radius: 999px;
   background: #fff;
   cursor: pointer;
@@ -94,8 +99,8 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 }
 
 .dot:checked {
-  background: var(--sakura-600);
-  border-color: var(--sakura-600);
+  background: var(--accent-600);
+  border-color: var(--accent-600);
 }
 
 .dot:checked::after {
@@ -129,7 +134,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 .unlock-sum {
   font-variant-numeric: tabular-nums;
   font-weight: 700;
-  color: var(--sakura-700);
+  color: var(--accent-700);
   padding-top: 0.05rem;
 }
 
@@ -153,6 +158,6 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 }
 
 .calc strong {
-  color: var(--sakura-700);
+  color: var(--accent-700);
 }
 </style>

@@ -7,14 +7,20 @@ const STORAGE_KEY = 'dorfromantik-sakura:language'
 
 const isLocale = (value: string): value is Locale => (LOCALES as readonly string[]).includes(value)
 
-/** Stored choice, else the device language, else English. */
+/**
+ * Stored choice, else the device language, else English.
+ *
+ * Guarded against running without a browser: the module is imported by tests
+ * that render components outside a DOM.
+ */
 function detectLocale(): Locale {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored && isLocale(stored)) return stored
   } catch {
-    /* private mode – then the device language it is */
+    /* private mode or no browser – then the device language it is */
   }
+  if (typeof navigator === 'undefined') return 'en'
   for (const tag of navigator.languages ?? [navigator.language]) {
     const base = tag.toLowerCase().split('-')[0]
     if (isLocale(base)) return base
@@ -27,8 +33,7 @@ export const locale = ref<Locale>(detectLocale())
 watch(
   locale,
   (value) => {
-    document.documentElement.lang = value
-    document.title = `Dorfromantik Sakura – ${MESSAGES[value].ui.title}`
+    if (typeof document !== 'undefined') document.documentElement.lang = value
     try {
       localStorage.setItem(STORAGE_KEY, value)
     } catch {

@@ -1,11 +1,15 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import TaskCards from './TaskCards.vue'
 import CatIcon from './CatIcon.vue'
 import NumberField from './NumberField.vue'
 import { t } from '../lib/i18n'
-import { CATEGORIES, type Sheet, type Totals } from '../lib/scoring'
+import type { Game } from '../lib/games'
+import type { Sheet, Totals } from '../lib/scoring'
 
-defineProps<{ sheet: Sheet; totals: Totals }>()
+const props = defineProps<{ game: Game; sheet: Sheet; totals: Totals }>()
+
+const text = computed(() => t.value.games[props.game.id])
 </script>
 
 <template>
@@ -19,10 +23,10 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
     </header>
 
     <ul class="rows">
-      <li v-for="category in CATEGORIES" :key="category.key" class="row">
+      <li v-for="category in game.categories" :key="category.key" class="row">
         <div class="row-head">
-          <span class="icon-badge"><CatIcon :name="category.key" /></span>
-          <span class="row-name">{{ t.categories[category.key].label }}</span>
+          <span class="icon-badge"><CatIcon :name="category.icon" /></span>
+          <span class="row-name">{{ text.categories[category.key].label }}</span>
           <span class="row-sum" :class="{ zero: totals.perCategory[category.key] === 0 }">
             {{ totals.perCategory[category.key] }}
           </span>
@@ -40,7 +44,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
               v-if="category.taskValues"
               v-model="sheet.taskCards[category.key]"
               :values="category.taskValues"
-              :category="t.categories[category.key].label"
+              :category="text.categories[category.key].label"
             />
             <div v-else class="typed">
               <NumberField
@@ -57,14 +61,14 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
           <NumberField
             v-if="category.hasBonus"
             v-model="sheet.bonus[category.key]"
-            :label="t.categories[category.key].bonus ?? ''"
+            :label="text.categories[category.key].bonus ?? ''"
             class="bonus"
           />
           <p v-else class="hatched">{{ t.ui.noScore }}</p>
         </div>
 
-        <p v-if="t.categories[category.key].bonusHint" class="row-hint">
-          {{ t.categories[category.key].bonusHint }}
+        <p v-if="text.categories[category.key].bonusHint" class="row-hint">
+          {{ text.categories[category.key].bonusHint }}
         </p>
       </li>
     </ul>
@@ -110,8 +114,8 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   font-variant-numeric: tabular-nums;
   font-weight: 700;
   font-size: 1.05rem;
-  color: var(--sakura-700);
-  background: var(--sakura-50);
+  color: var(--accent-700);
+  background: var(--accent-50);
   border-radius: 999px;
   padding: 0.1rem 0.6rem;
   min-width: 2.4rem;
@@ -119,7 +123,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 }
 
 .row-sum.zero {
-  color: #b9a7a9;
+  color: var(--muted);
   background: transparent;
 }
 
@@ -150,7 +154,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 .field-label em {
   font-style: normal;
   font-variant-numeric: tabular-nums;
-  color: var(--sakura-700);
+  color: var(--accent-700);
 }
 
 .typed {
@@ -182,13 +186,13 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   padding: 0.62rem 0.5rem;
   text-align: center;
   font-size: 0.78rem;
-  color: #b09a9d;
+  color: var(--muted);
   background: repeating-linear-gradient(
     -45deg,
-    #f3e6e7,
-    #f3e6e7 5px,
-    #fbf4f4 5px,
-    #fbf4f4 10px
+    var(--hatch-a),
+    var(--hatch-a) 5px,
+    var(--hatch-b) 5px,
+    var(--hatch-b) 10px
   );
 }
 

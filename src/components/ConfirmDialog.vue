@@ -55,19 +55,14 @@ const onKeydown = (event: KeyboardEvent) => {
         @keydown="onKeydown"
       >
         <div class="card">
-          <svg class="blossom" viewBox="0 0 32 32" aria-hidden="true">
-            <g fill="#f2a6c4" stroke="#fff" stroke-width="1.2">
-              <ellipse
-                v-for="i in 5"
-                :key="i"
-                cx="16"
-                cy="8.5"
-                rx="4.6"
-                ry="6"
-                :transform="`rotate(${(i - 1) * 72} 16 16)`"
-              />
-              <circle cx="16" cy="16" r="2.6" fill="#e07aa5" />
-            </g>
+          <svg class="mark" viewBox="0 0 32 32" aria-hidden="true">
+            <circle cx="16" cy="16" r="13" fill="var(--accent-50)" />
+            <path
+              d="M16 8.6v9.2M16 22.2v1.2"
+              stroke="var(--accent-600)"
+              stroke-width="2.6"
+              stroke-linecap="round"
+            />
           </svg>
 
           <h2>{{ title }}</h2>
@@ -94,7 +89,7 @@ const onKeydown = (event: KeyboardEvent) => {
   align-items: center;
   justify-content: center;
   padding: 1.25rem;
-  background: rgba(78, 24, 38, 0.45);
+  background: rgba(35, 28, 20, 0.45);
   backdrop-filter: blur(3px);
 }
 
@@ -105,10 +100,10 @@ const onKeydown = (event: KeyboardEvent) => {
   border-radius: 1.2rem;
   padding: 1.6rem 1.25rem 1.1rem;
   text-align: center;
-  box-shadow: 0 18px 44px rgba(90, 30, 45, 0.32);
+  box-shadow: 0 18px 44px rgba(40, 30, 20, 0.32);
 }
 
-.blossom {
+.mark {
   width: 2.6rem;
   height: 2.6rem;
   display: block;
@@ -153,22 +148,22 @@ p {
 }
 
 .ghost:active {
-  background: var(--sakura-25);
+  background: var(--accent-25);
 }
 
 .primary {
-  border: 1.5px solid var(--sakura-600);
-  background: var(--sakura-600);
+  border: 1.5px solid var(--accent-600);
+  background: var(--accent-600);
   color: #fff;
-  box-shadow: 0 2px 8px rgba(174, 67, 89, 0.32);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .primary:active {
-  background: var(--sakura-700);
+  background: var(--accent-700);
 }
 
 .actions button:focus-visible {
-  outline: 3px solid var(--sakura-300);
+  outline: 3px solid var(--accent-300);
   outline-offset: 2px;
 }
 

@@ -1,53 +1,55 @@
-# Dorfromantik Sakura Score Pad
+# Dorfromantik Score Pad
 
-A digital score pad for **Dorfromantik: Sakura**. Small Vue 3 web app, built for
-phones, no backend.
+A digital score pad for **Dorfromantik: The Board Game** and its standalone
+successor **Dorfromantik: Sakura**. Small Vue 3 web app, built for phones, no
+backend.
 
 > Unofficial fan project. Not affiliated with, endorsed by, or sponsored by
 > Pegasus Spiele. "Dorfromantik" is a trademark of Pegasus Spiele GmbH.
 
-## What it does
+## The two pads
 
-**Upper table** – the seven categories of the printed sheet (cherry trees, rice
-fields, villages, roads, rivers, Wraparound Tasks, "7"), each with a task row
-and a bonus row:
+A switch in the top left picks the game; each one keeps its own sheet, so a
+game in progress survives a look at the other pad.
 
-| Category | Bonus row |
-| --- | --- |
-| Cherry trees / Rice fields / Villages | Flags |
-| Roads | longest Road |
-| Rivers | longest River |
-| Wraparound Tasks | +2 per Wraparound Task on the longest Road / River |
-| 7 | hatched, no input |
+| | Classic | Sakura |
+| --- | --- | --- |
+| Task columns | Forest, Grain, Village, Track, Stream | Cherry trees, Rice fields, Villages, Roads, Rivers, Wraparound Tasks, "7" |
+| Task markers per type | 1×4, 2×5, 2×6 = 26 points | 2×4, 2×5, 2×6 = 30 points |
+| Flags | green, yellow, red | pink, green, red |
+| Longest | Track and Stream | Road and River |
+| Unlocked entries | 15, plus 8 from the mini expansions behind a switch | 14 |
+| Colours | meadow green | cherry blossom pink |
 
-Six of the seven columns have a fixed set of task markers: the rules state that
-they show "the values 4, 5 and 6, twice each" per type, 30 points in total –
-that covers cherry trees, rice fields, villages, roads, rivers and Wraparound
-Tasks alike. They are tapped as six markers rather than typed, so only reachable
-sums are possible and a full column takes six taps. Only the "7" column takes
-the number of completed double tasks (× 7 points). The bonus row is typed in:
-Flags count the tiles of the flag territory, but only if it is complete; longest
-Road and longest River count the tiles of the respective connection.
+**Task row** – the markers of a column are tapped rather than typed, so only
+reachable sums are possible and a full column takes five or six taps. The one
+exception is the Sakura "7" column, which takes the number of completed double
+tasks (× 7 points).
 
-**Unlocked** – the 14 entries of the lower block. An entry only counts once it is
-ticked; its input fields appear then. Where the sheet gives a factor, the app
-does the maths (e.g. 3 bridges × 5 = 15 points). Temples are capped at 3 because
-there are only three temple tiles; hot springs have two fields (completed
-springs × 3 and Wraparound Tasks × 3). Collected cherry blossoms have no factor
-and are entered as points.
+**Bonus row** – typed in. Flags count the tiles of the flag territory, but only
+if it is complete; longest Track/Road and longest Stream/River count the tiles
+of the respective connection. In Sakura the Wraparound column adds +2 per
+Wraparound Task along the longest connection.
 
-The factors come from the official score pad and rules published by Pegasus
-Spiele (as of 07/2025).
+**Unlocked** – an entry only counts once it is ticked; its input fields appear
+then. Where the sheet gives a factor, the app does the maths (e.g. 3 bridges ×
+5 = 15 points). Where it gives none – the classic buildings that hold task
+markers, collected cherry blossoms – the points are entered directly. Temples
+are capped at 3, because there are only three temple tiles.
 
-**Result** sticks to the bottom of the screen. The current game is stored in
-`localStorage` and survives a reload or a tab switch; "New game" clears the
-sheet. There is deliberately no history of past games.
+The structures and factors come from the rulebooks and score pads published by
+Pegasus Spiele: 07/2025 for Sakura, the 2024 edition for the classic pad.
+
+**Result** sticks to the bottom of the screen. The current sheet of each game is
+stored in `localStorage` and survives a reload, a tab switch or a look at the
+other game; "New game" clears the sheet of the game on screen. There is
+deliberately no history of past games.
 
 The app is a PWA: add it to the home screen on a phone and it also runs offline.
 
 ## Languages
 
-The app speaks the six languages the game was published in: German, English,
+The app speaks the six languages the games were published in: German, English,
 French, Italian, Spanish and Polish. On first visit it follows the device
 language (falling back to English), the switcher sits in the top right, and the
 choice is remembered.
@@ -59,10 +61,12 @@ our own translations – correct in substance, but possibly not word for word
 identical to the pad printed by the local publisher (Gigamic, Red Glove, IUVI
 Games). Corrections are a one-line change in `src/lib/messages.ts`.
 
-All strings live in `src/lib/messages.ts`; `src/lib/scoring.ts` carries structure
-and factors only. `src/lib/i18n.test.ts` checks every language for missing and
-surplus strings – adding a language means an entry in `LOCALES`, a block in
-`MESSAGES`, and running the tests.
+All strings live in `src/lib/messages.ts`, keyed by game; `src/lib/games.ts`
+carries structure and factors, `src/lib/scoring.ts` the maths – neither knows
+about cherry blossoms or railways. `src/lib/i18n.test.ts` checks every language
+and both games for missing and surplus strings, and `src/components/render.test.ts`
+renders both pads, which is what catches a key that exists in a game but not in
+its texts.
 
 ## Development
 

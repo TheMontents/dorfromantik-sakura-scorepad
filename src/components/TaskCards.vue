@@ -61,10 +61,10 @@ const toggle = (index: number) => {
 }
 
 .chip.on {
-  background: var(--sakura-600);
-  border-color: var(--sakura-600);
+  background: var(--accent-600);
+  border-color: var(--accent-600);
   color: #fff;
-  box-shadow: 0 2px 6px rgba(174, 67, 89, 0.3);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 
 .chip:active {
