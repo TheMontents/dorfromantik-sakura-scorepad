@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
+  AUFTRAGS_WERTE,
   CATEGORIES,
   UNLOCKS,
+  auftragPoints,
   categoryTotal,
   computeTotals,
   createEmptySheet,
@@ -35,11 +37,38 @@ describe('Bogen-Struktur', () => {
   it('hat die 14 freigespielten Positionen', () => {
     expect(UNLOCKS).toHaveLength(14)
   })
+
+  it('gibt den 5 Gebietsspalten die Auftragskarten 4/4/5/5/6/6', () => {
+    const mitKarten = CATEGORIES.filter((c) => c.auftragsWerte !== null)
+    expect(mitKarten.map((c) => c.key)).toEqual([
+      'kirschbluete',
+      'reisfeld',
+      'dorf',
+      'weg',
+      'wasser',
+    ])
+    for (const category of mitKarten) expect(category.auftragsWerte).toEqual([4, 4, 5, 5, 6, 6])
+  })
+
+  it('laesst Rundumauftraege und die 7er-Spalte frei eintippen', () => {
+    const ohneKarten = CATEGORIES.filter((c) => c.auftragsWerte === null)
+    expect(ohneKarten.map((c) => c.key)).toEqual(['rundum', 'sieben'])
+  })
+
+  it('kommt auf 30 Punkte, wenn alle Auftragskarten erfuellt sind', () => {
+    expect(AUFTRAGS_WERTE.reduce((a, b) => a + b, 0)).toBe(30)
+  })
 })
 
 describe('createEmptySheet', () => {
   it('startet bei null Punkten', () => {
     expect(computeTotals(createEmptySheet()).ergebnis).toBe(0)
+  })
+
+  it('legt je Gebietsspalte sechs nicht angehakte Auftragskarten an', () => {
+    const sheet = createEmptySheet()
+    expect(sheet.auftragsChips.dorf).toEqual([false, false, false, false, false, false])
+    expect(sheet.auftragsChips.rundum).toEqual([])
   })
 
   it('legt je Feld einen Wert an und nichts ist freigespielt', () => {
@@ -79,10 +108,41 @@ describe('unlockPoints', () => {
   })
 })
 
+describe('auftragPoints', () => {
+  it('summiert nur die angehakten Auftragskarten', () => {
+    const sheet = createEmptySheet()
+    // 4 + 4 + 5 + 5 + 6 = 24
+    sheet.auftragsChips.kirschbluete = [true, true, true, true, true, false]
+    expect(auftragPoints(sheet, 'kirschbluete')).toBe(24)
+  })
+
+  it('ergibt 30, wenn alle sechs Karten angehakt sind', () => {
+    const sheet = createEmptySheet()
+    sheet.auftragsChips.dorf = [true, true, true, true, true, true]
+    expect(auftragPoints(sheet, 'dorf')).toBe(30)
+  })
+
+  it('ignoriert bei Kartenspalten einen frei eingetippten Wert', () => {
+    const sheet = createEmptySheet()
+    sheet.auftraege.wasser = 99
+    sheet.auftragsChips.wasser = [false, false, true, false, true, false]
+    expect(auftragPoints(sheet, 'wasser')).toBe(11)
+  })
+
+  it('nimmt bei Rundumauftraegen und der 7 den eingetippten Wert', () => {
+    const sheet = createEmptySheet()
+    sheet.auftraege.rundum = 6
+    sheet.auftraege.sieben = 7
+    expect(auftragPoints(sheet, 'rundum')).toBe(6)
+    expect(auftragPoints(sheet, 'sieben')).toBe(7)
+  })
+})
+
 describe('categoryTotal', () => {
   it('addiert Auftrags- und Bonuszeile', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.weg = 19
+    // 4 + 4 + 5 + 6 = 19
+    sheet.auftragsChips.weg = [true, true, true, false, true, false]
     sheet.bonus.weg = 9
     expect(categoryTotal(sheet, 'weg')).toBe(28)
   })
@@ -98,11 +158,11 @@ describe('categoryTotal', () => {
 describe('computeTotals', () => {
   it('summiert die obere Tabelle zeilenweise', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.kirschbluete = 24
-    sheet.auftraege.reisfeld = 18
-    sheet.auftraege.dorf = 25
-    sheet.auftraege.weg = 19
-    sheet.auftraege.wasser = 11
+    sheet.auftragsChips.kirschbluete = [true, true, true, true, true, false] // 24
+    sheet.auftragsChips.reisfeld = [true, true, false, true, false, true] // 4+4+5+6 = 19
+    sheet.auftragsChips.dorf = [true, true, false, true, true, true] // 4+4+5+6+6 = 25
+    sheet.auftragsChips.weg = [true, true, true, false, true, false] // 19
+    sheet.auftragsChips.wasser = [false, false, true, false, true, false] // 11
     sheet.auftraege.rundum = 6
     sheet.auftraege.sieben = 7
     sheet.bonus.kirschbluete = 3
@@ -113,15 +173,16 @@ describe('computeTotals', () => {
     sheet.bonus.rundum = 4
 
     const totals = computeTotals(sheet)
-    expect(totals.auftraege).toBe(110)
+    expect(totals.proAuftrag.dorf).toBe(25)
+    expect(totals.auftraege).toBe(24 + 19 + 25 + 19 + 11 + 6 + 7)
     expect(totals.bonus).toBe(28)
     expect(totals.freigespielt).toBe(0)
-    expect(totals.ergebnis).toBe(138)
+    expect(totals.ergebnis).toBe(111 + 28)
   })
 
   it('rechnet obere Tabelle und Freigespieltes zum Ergebnis zusammen', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.dorf = 10
+    sheet.auftragsChips.dorf = [true, false, true, false, false, false] // 9
     sheet.bonus.dorf = 5
     sheet.unlocks.bruecken = { enabled: true, values: [2] }
     sheet.unlocks.heisseQuellen = { enabled: true, values: [1, 2] }
@@ -130,7 +191,7 @@ describe('computeTotals', () => {
     expect(totals.proUnlock.bruecken).toBe(10)
     expect(totals.proUnlock.heisseQuellen).toBe(9)
     expect(totals.freigespielt).toBe(19)
-    expect(totals.ergebnis).toBe(34)
+    expect(totals.ergebnis).toBe(33)
   })
 
   it('zaehlt abgehakte, aber leere Positionen mit 0', () => {

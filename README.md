@@ -17,8 +17,12 @@ zweiten Zeile:
 | Rundumaufträge | +2 je Rundumauftrag an längster Straße / längstem Fluss |
 | 7 | schraffiert, keine Eingabe |
 
-Alle Felder werden frei eingetippt, die App summiert nur – Zeilensummen,
-Spaltensummen und Gesamtergebnis.
+Die fünf Gebietsspalten (Kirschblüten, Reisfelder, Dorf, Wege, Wasser) haben eine
+feste Auftragsmenge: je zweimal 4, 5 und 6 Punkte, zusammen 30. Sie werden als
+sechs Chips angetippt statt eingetippt – damit sind genau die erreichbaren
+Summen möglich und eine volle Spalte kostet sechs Taps. Rundumaufträge und die
+7er-Spalte haben keine feste Kartenmenge und bleiben ein Zahlenfeld; die zweite
+Zeile (Fahnen / längste / +2) wird ebenfalls frei eingetippt.
 
 **Freigespielt** – die 14 Positionen des unteren Blocks. Eine Position zählt
 erst, wenn sie abgehakt ist; dann erscheinen ihre Eingabefelder. Wo der Bogen

@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import AuftragsChips from './AuftragsChips.vue'
 import CatIcon from './CatIcon.vue'
 import NumberField from './NumberField.vue'
 import { CATEGORIES, type Sheet, type Totals } from '../lib/scoring'
@@ -25,15 +26,36 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
             {{ totals.proKategorie[category.key] }}
           </span>
         </div>
-        <div class="row-fields">
-          <NumberField v-model="sheet.auftraege[category.key]" label="Aufträge" />
+
+        <div class="row-body">
+          <div class="auftraege">
+            <span class="field-label">
+              Aufträge
+              <em v-if="category.auftragsWerte">{{ totals.proAuftrag[category.key] }}</em>
+            </span>
+            <AuftragsChips
+              v-if="category.auftragsWerte"
+              v-model="sheet.auftragsChips[category.key]"
+              :werte="category.auftragsWerte"
+              :kategorie="category.label"
+            />
+            <NumberField
+              v-else
+              v-model="sheet.auftraege[category.key]"
+              label="Aufträge"
+              hide-label
+            />
+          </div>
+
           <NumberField
             v-if="category.bonusLabel"
             v-model="sheet.bonus[category.key]"
             :label="category.bonusLabel"
+            class="bonus"
           />
           <p v-else class="hatched">keine Wertung</p>
         </div>
+
         <p v-if="category.bonusHint" class="row-hint">{{ category.bonusHint }}</p>
       </li>
     </ul>
@@ -60,7 +82,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  margin-bottom: 0.45rem;
+  margin-bottom: 0.5rem;
 }
 
 .icon-badge {
@@ -92,15 +114,43 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   background: transparent;
 }
 
-.row-fields {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+.row-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
   gap: 0.6rem;
+}
+
+.auftraege {
+  flex: 1 1 15rem;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.field-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.field-label em {
+  font-style: normal;
+  font-variant-numeric: tabular-nums;
+  color: var(--sakura-700);
+}
+
+.bonus {
+  flex: 0 1 8.5rem;
 }
 
 .hatched {
   margin: 0;
-  align-self: end;
+  flex: 0 1 8.5rem;
   border-radius: 0.7rem;
   padding: 0.62rem 0.5rem;
   text-align: center;

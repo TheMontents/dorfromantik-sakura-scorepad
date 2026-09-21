@@ -24,6 +24,10 @@ export function loadSheet(): Sheet {
   try {
     const stored = JSON.parse(raw) as Partial<Sheet>
     for (const category of CATEGORIES) {
+      const chips = stored.auftragsChips?.[category.key]
+      sheet.auftragsChips[category.key] = (category.auftragsWerte ?? []).map(
+        (_, index) => chips?.[index] === true,
+      )
       sheet.auftraege[category.key] = toNumber(stored.auftraege?.[category.key])
       sheet.bonus[category.key] = toNumber(stored.bonus?.[category.key])
     }
