@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue'
+import ConfirmDialog from './components/ConfirmDialog.vue'
 import ScoreTable from './components/ScoreTable.vue'
 import UnlockList from './components/UnlockList.vue'
 import { LOCALES, LOCALE_NAMES, locale, t } from './lib/i18n'
@@ -11,11 +12,20 @@ const totals = computed(() => computeTotals(sheet.value))
 
 watch(sheet, (value) => saveSheet(value), { deep: true })
 
-const startNewGame = () => {
-  if (totals.value.result > 0 && !confirm(t.value.ui.confirmReset)) return
+const askReset = ref(false)
+
+const resetSheet = () => {
+  askReset.value = false
   clearSheet()
   sheet.value = createEmptySheet()
   window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+// An empty sheet has nothing to lose, so the question is only worth asking
+// once something has been entered.
+const startNewGame = () => {
+  if (totals.value.result === 0) resetSheet()
+  else askReset.value = true
 }
 </script>
 
@@ -49,6 +59,16 @@ const startNewGame = () => {
 
       <p class="disclaimer">{{ t.ui.disclaimer }}</p>
     </main>
+
+    <ConfirmDialog
+      :open="askReset"
+      :title="t.ui.newGame"
+      :message="t.ui.confirmReset"
+      :confirm-label="t.ui.clear"
+      :cancel-label="t.ui.cancel"
+      @confirm="resetSheet"
+      @cancel="askReset = false"
+    />
 
     <footer class="result">
       <button type="button" class="reset" @click="startNewGame">{{ t.ui.newGame }}</button>
