@@ -1,0 +1,8 @@
+services:
+  dorfromantik-sakura:
+    build: .
+    image: dorfromantik-sakura:latest
+    container_name: dorfromantik-sakura
+    ports:
+      - "30028:80"
+    restart: unless-stopped

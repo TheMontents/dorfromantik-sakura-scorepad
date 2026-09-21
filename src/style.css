@@ -1,0 +1,89 @@
+:root {
+  /* Farbwelt des Papierbogens: Kirschblütenrosa bis warmes Rot */
+  --sakura-25: #fdf4f5;
+  --sakura-50: #fbeaec;
+  --sakura-100: #f7d6da;
+  --sakura-300: #eba9b3;
+  --sakura-600: #c9566d;
+  --sakura-700: #ae4359;
+  --sakura-800: #8f3247;
+
+  --ink: #3f2b2f;
+  --ink-soft: #8a7074;
+  --line: #ecd9dc;
+  --line-soft: #f2e4e6;
+
+  color-scheme: light;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  color: var(--ink);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  background: linear-gradient(170deg, #e59aaa 0%, #d8707b 45%, #c9566d 100%) fixed;
+  -webkit-text-size-adjust: 100%;
+}
+
+h1,
+h2 {
+  font-weight: 700;
+}
+
+.panel {
+  background: #fff;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 6px 18px rgba(110, 40, 55, 0.14);
+}
+
+.panel-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.85rem;
+  background: var(--sakura-600);
+  color: #fff;
+}
+
+.panel-head h2 {
+  margin: 0;
+  font-size: 1.02rem;
+  letter-spacing: 0.01em;
+}
+
+.head-sums {
+  display: flex;
+  gap: 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+@media (min-width: 30rem) {
+  .panel-head h2 {
+    font-size: 1.1rem;
+  }
+}
