@@ -109,7 +109,7 @@ export const UNLOCKS: Unlock[] = [
     label: 'Heiße Quellen',
     hint: 'abgeschlossen = 3 · 3/Rundumauftrag',
     fields: [
-      { label: 'Abgeschlossene Quellen', factor: 3 },
+      { label: 'Abgeschlossen', factor: 3, jaNein: true },
       { label: 'Rundumaufträge', factor: 3 },
     ],
   },

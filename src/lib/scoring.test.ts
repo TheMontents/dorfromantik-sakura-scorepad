@@ -101,8 +101,12 @@ describe('unlockPoints', () => {
     expect(unlockPoints(tempel, { enabled: true, values: [1] })).toBe(6)
   })
 
-  it('addiert bei Heissen Quellen beide Regeln: abgeschlossen x3 und 3 je Rundumauftrag', () => {
-    expect(unlockPoints(unlockById('heisseQuellen'), { enabled: true, values: [2, 3] })).toBe(15)
+  it('addiert bei Heissen Quellen beide Regeln: abgeschlossen ja/nein und 3 je Rundumauftrag', () => {
+    const quellen = unlockById('heisseQuellen')
+    expect(quellen.fields[0].jaNein).toBe(true)
+    expect(quellen.fields[1].jaNein).toBeUndefined()
+    expect(unlockPoints(quellen, { enabled: true, values: [1, 3] })).toBe(12)
+    expect(unlockPoints(quellen, { enabled: true, values: [0, 3] })).toBe(9)
   })
 
   it('nimmt bei Kirschblueten den Wert direkt als Punkte', () => {

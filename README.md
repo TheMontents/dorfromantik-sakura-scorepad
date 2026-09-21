@@ -26,8 +26,10 @@ Zeile (Fahnen / längste / +2) wird ebenfalls frei eingetippt.
 
 **Freigespielt** – die 14 Positionen des unteren Blocks. Eine Position zählt
 erst, wenn sie abgehakt ist; dann erscheinen ihre Eingabefelder. Wo der Bogen
-einen Faktor vorgibt, wird gerechnet (z.B. 3 Brücken × 5 = 15 Punkte). Heiße
-Quellen hat zwei Felder: abgeschlossene Quellen × 3 und Rundumaufträge × 3.
+einen Faktor vorgibt, wird gerechnet (z.B. 3 Brücken × 5 = 15 Punkte). Wo es
+nichts zu zählen gibt, steht ein Ja/Nein-Schalter: Tempel (passend umschlossen =
+6) und der erste Teil der Heißen Quellen (abgeschlossen = 3); deren zweiter Teil
+zählt 3 Punkte je Rundumauftrag.
 Gesammelte Kirschblüten haben keinen Faktor und werden als Punktzahl eingetippt.
 
 **Ergebnis** klebt sichtbar am unteren Rand. Die laufende Partie wird im
