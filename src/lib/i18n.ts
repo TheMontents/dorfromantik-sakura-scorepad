@@ -3,17 +3,17 @@ import { LOCALES, MESSAGES, type Locale } from './messages'
 
 export { LOCALES, LOCALE_NAMES, type Locale } from './messages'
 
-const STORAGE_KEY = 'dorfromantik-sakura:sprache'
+const STORAGE_KEY = 'dorfromantik-sakura:language'
 
 const isLocale = (value: string): value is Locale => (LOCALES as readonly string[]).includes(value)
 
-/** Gespeicherte Wahl, sonst die Sprache des Geräts, sonst Englisch. */
+/** Stored choice, else the device language, else English. */
 function detectLocale(): Locale {
   try {
     const stored = localStorage.getItem(STORAGE_KEY)
     if (stored && isLocale(stored)) return stored
   } catch {
-    /* Privatmodus – dann eben die Gerätesprache */
+    /* private mode – then the device language it is */
   }
   for (const tag of navigator.languages ?? [navigator.language]) {
     const base = tag.toLowerCase().split('-')[0]
@@ -32,16 +32,16 @@ watch(
     try {
       localStorage.setItem(STORAGE_KEY, value)
     } catch {
-      /* siehe oben */
+      /* see above */
     }
   },
   { immediate: true },
 )
 
-/** Texte der aktuellen Sprache. */
+/** Messages of the current language. */
 export const t = computed(() => MESSAGES[locale.value])
 
-/** Platzhalter der Form {name} ersetzen. */
+/** Replaces placeholders of the form {name}. */
 export function fill(template: string, values: Record<string, string | number>): string {
   return template.replace(/\{(\w+)\}/g, (match, key: string) =>
     key in values ? String(values[key]) : match,

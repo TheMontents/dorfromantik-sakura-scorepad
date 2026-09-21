@@ -11,7 +11,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
     <header class="panel-head">
       <h2>{{ t.ui.unlocked }}</h2>
       <div class="head-sums">
-        <span>{{ totals.freigespielt }} {{ t.ui.points }}</span>
+        <span>{{ totals.unlocked }} {{ t.ui.points }}</span>
       </div>
     </header>
 
@@ -29,7 +29,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
             <span class="unlock-hint">{{ t.unlocks[unlock.id].hint }}</span>
           </span>
           <span v-if="sheet.unlocks[unlock.id].enabled" class="unlock-sum">
-            {{ totals.proUnlock[unlock.id] }}
+            {{ totals.perUnlock[unlock.id] }}
           </span>
         </label>
 

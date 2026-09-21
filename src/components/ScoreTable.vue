@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AuftragsChips from './AuftragsChips.vue'
+import TaskCards from './TaskCards.vue'
 import CatIcon from './CatIcon.vue'
 import NumberField from './NumberField.vue'
 import { t } from '../lib/i18n'
@@ -13,7 +13,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
     <header class="panel-head">
       <h2>{{ t.ui.tasks }}</h2>
       <div class="head-sums">
-        <span>{{ t.ui.tasks }} {{ totals.auftraege }}</span>
+        <span>{{ t.ui.tasks }} {{ totals.tasks }}</span>
         <span>{{ t.ui.bonusRow }} {{ totals.bonus }}</span>
       </div>
     </header>
@@ -23,33 +23,33 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
         <div class="row-head">
           <span class="icon-badge"><CatIcon :name="category.key" /></span>
           <span class="row-name">{{ t.categories[category.key].label }}</span>
-          <span class="row-sum" :class="{ zero: totals.proKategorie[category.key] === 0 }">
-            {{ totals.proKategorie[category.key] }}
+          <span class="row-sum" :class="{ zero: totals.perCategory[category.key] === 0 }">
+            {{ totals.perCategory[category.key] }}
           </span>
         </div>
 
         <div class="row-body">
-          <div class="auftraege">
+          <div class="tasks">
             <span class="field-label">
-              {{ category.auftragsFaktor ? t.ui.completedTasks : t.ui.tasks }}
-              <em v-if="category.auftragsWerte || category.auftragsFaktor">
-                {{ totals.proAuftrag[category.key] }} {{ t.ui.pointsShort }}
+              {{ category.taskFactor ? t.ui.completedTasks : t.ui.tasks }}
+              <em v-if="category.taskValues || category.taskFactor">
+                {{ totals.perCategoryTasks[category.key] }} {{ t.ui.pointsShort }}
               </em>
             </span>
-            <AuftragsChips
-              v-if="category.auftragsWerte"
-              v-model="sheet.auftragsChips[category.key]"
-              :werte="category.auftragsWerte"
-              :kategorie="t.categories[category.key].label"
+            <TaskCards
+              v-if="category.taskValues"
+              v-model="sheet.taskCards[category.key]"
+              :values="category.taskValues"
+              :category="t.categories[category.key].label"
             />
-            <div v-else class="frei">
+            <div v-else class="typed">
               <NumberField
-                v-model="sheet.auftraege[category.key]"
-                :label="category.auftragsFaktor ? t.ui.amount : t.ui.tasks"
+                v-model="sheet.tasks[category.key]"
+                :label="category.taskFactor ? t.ui.amount : t.ui.tasks"
                 hide-label
               />
-              <span v-if="category.auftragsFaktor" class="faktor">
-                × {{ category.auftragsFaktor }} {{ t.ui.points }}
+              <span v-if="category.taskFactor" class="factor">
+                × {{ category.taskFactor }} {{ t.ui.points }}
               </span>
             </div>
           </div>
@@ -130,7 +130,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   gap: 0.6rem;
 }
 
-.auftraege {
+.tasks {
   flex: 1 1 15rem;
   min-width: 0;
   display: flex;
@@ -153,18 +153,18 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   color: var(--sakura-700);
 }
 
-.frei {
+.typed {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.frei > :first-child {
+.typed > :first-child {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-.faktor {
+.factor {
   flex: none;
   font-size: 0.78rem;
   font-weight: 600;

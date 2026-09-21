@@ -5,7 +5,7 @@ import { t } from '../lib/i18n'
 const props = withDefaults(
   defineProps<{
     label: string
-    /** Beschriftung nur fuer Screenreader ausgeben */
+    /** Render the label for screen readers only */
     hideLabel?: boolean
     step?: number
     min?: number

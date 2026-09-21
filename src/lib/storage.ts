@@ -1,6 +1,6 @@
 import { CATEGORIES, UNLOCKS, createEmptySheet, type Sheet } from './scoring'
 
-const STORAGE_KEY = 'dorfromantik-sakura:aktuelle-partie:v2'
+const STORAGE_KEY = 'dorfromantik-sakura:current-game:v3'
 
 const toNumber = (value: unknown): number => {
   const n = Number(value)
@@ -8,8 +8,8 @@ const toNumber = (value: unknown): number => {
 }
 
 /**
- * Laedt die laufende Partie und fuellt alles auf, was fehlt oder kaputt ist.
- * Damit ueberlebt ein gespeicherter Bogen auch spaetere Aenderungen am Block.
+ * Loads the current game and fills in whatever is missing or broken, so a
+ * stored sheet survives later changes to the score pad.
  */
 export function loadSheet(): Sheet {
   const sheet = createEmptySheet()
@@ -24,11 +24,11 @@ export function loadSheet(): Sheet {
   try {
     const stored = JSON.parse(raw) as Partial<Sheet>
     for (const category of CATEGORIES) {
-      const chips = stored.auftragsChips?.[category.key]
-      sheet.auftragsChips[category.key] = (category.auftragsWerte ?? []).map(
-        (_, index) => chips?.[index] === true,
+      const cards = stored.taskCards?.[category.key]
+      sheet.taskCards[category.key] = (category.taskValues ?? []).map(
+        (_, index) => cards?.[index] === true,
       )
-      sheet.auftraege[category.key] = toNumber(stored.auftraege?.[category.key])
+      sheet.tasks[category.key] = toNumber(stored.tasks?.[category.key])
       sheet.bonus[category.key] = toNumber(stored.bonus?.[category.key])
     }
     for (const unlock of UNLOCKS) {
@@ -51,7 +51,7 @@ export function saveSheet(sheet: Sheet): void {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sheet))
   } catch {
-    /* Privatmodus o.ae. – dann eben ohne Autosave weiterspielen */
+    /* private mode and friends – then we simply play on without autosave */
   }
 }
 
@@ -59,6 +59,6 @@ export function clearSheet(): void {
   try {
     localStorage.removeItem(STORAGE_KEY)
   } catch {
-    /* siehe oben */
+    /* see above */
   }
 }

@@ -2,34 +2,34 @@
 import { fill, t } from '../lib/i18n'
 
 const props = defineProps<{
-  /** Werte der Auftragskarten, z.B. [4, 4, 5, 5, 6, 6] */
-  werte: number[]
-  /** Name der Kategorie – nur fuer Screenreader */
-  kategorie: string
+  /** Values of the task markers, e.g. [4, 4, 5, 5, 6, 6] */
+  values: number[]
+  /** Category name – for screen readers only */
+  category: string
 }>()
 
 const model = defineModel<boolean[]>({ required: true })
 
 const toggle = (index: number) => {
-  const next = props.werte.map((_, i) => model.value[i] === true)
+  const next = props.values.map((_, i) => model.value[i] === true)
   next[index] = !next[index]
   model.value = next
 }
 </script>
 
 <template>
-  <div class="chips" role="group" :aria-label="fill(t.ui.taskGroup, { category: kategorie })">
+  <div class="chips" role="group" :aria-label="fill(t.ui.taskGroup, { category: category })">
     <button
-      v-for="(wert, index) in werte"
+      v-for="(value, index) in values"
       :key="index"
       type="button"
       class="chip"
       :class="{ on: model[index] }"
       :aria-pressed="model[index] === true"
-      :aria-label="fill(t.ui.taskCard, { points: wert })"
+      :aria-label="fill(t.ui.taskCard, { points: value })"
       @click="toggle(index)"
     >
-      {{ wert }}
+      {{ value }}
     </button>
   </div>
 </template>

@@ -11,8 +11,8 @@ const totals = computed(() => computeTotals(sheet.value))
 
 watch(sheet, (value) => saveSheet(value), { deep: true })
 
-const neuePartie = () => {
-  if (totals.value.ergebnis > 0 && !confirm(t.value.ui.confirmReset)) return
+const startNewGame = () => {
+  if (totals.value.result > 0 && !confirm(t.value.ui.confirmReset)) return
   clearSheet()
   sheet.value = createEmptySheet()
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -41,18 +41,18 @@ const neuePartie = () => {
       <section class="panel summary">
         <h2 class="sr-only">{{ t.ui.subtotals }}</h2>
         <dl>
-          <div><dt>{{ t.ui.tasks }}</dt><dd>{{ totals.auftraege }}</dd></div>
+          <div><dt>{{ t.ui.tasks }}</dt><dd>{{ totals.tasks }}</dd></div>
           <div><dt>{{ t.ui.bonusRow }}</dt><dd>{{ totals.bonus }}</dd></div>
-          <div><dt>{{ t.ui.unlocked }}</dt><dd>{{ totals.freigespielt }}</dd></div>
+          <div><dt>{{ t.ui.unlocked }}</dt><dd>{{ totals.unlocked }}</dd></div>
         </dl>
       </section>
     </main>
 
     <footer class="result">
-      <button type="button" class="reset" @click="neuePartie">{{ t.ui.newGame }}</button>
+      <button type="button" class="reset" @click="startNewGame">{{ t.ui.newGame }}</button>
       <div class="result-score">
         <span class="result-label">{{ t.ui.result }}</span>
-        <span class="result-value">{{ totals.ergebnis }}</span>
+        <span class="result-value">{{ totals.result }}</span>
       </div>
     </footer>
   </div>

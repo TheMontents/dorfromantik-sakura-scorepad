@@ -1,7 +1,7 @@
 /**
- * Erzeugt die PWA-Icons (public/icon-192.png, public/icon-512.png) als
- * Kirschblüte auf rosa Grund – ohne Abhängigkeiten, direkt als PNG.
- * Aufruf: npm run icons
+ * Generates the PWA icons (public/icon-192.png, public/icon-512.png): a cherry
+ * blossom on a pink ground, written straight to PNG without dependencies.
+ * Run with: npm run icons
  */
 import { deflateSync } from 'node:zlib'
 import { writeFileSync } from 'node:fs'
@@ -39,7 +39,7 @@ const png = (width, height, rgba) => {
   ihdr[9] = 6 // RGBA
   const raw = Buffer.alloc((width * 4 + 1) * height)
   for (let y = 0; y < height; y++) {
-    raw[y * (width * 4 + 1)] = 0 // Filter: none
+    raw[y * (width * 4 + 1)] = 0 // filter: none
     rgba.copy(raw, y * (width * 4 + 1) + 1, y * width * 4, (y + 1) * width * 4)
   }
   return Buffer.concat([
@@ -58,9 +58,9 @@ const PETAL = [255, 255, 255]
 const PETAL_EDGE = [242, 166, 196]
 const CENTER = [224, 122, 165]
 
-/** Farbe eines Punktes in Einheitskoordinaten (-1..1, y nach unten). */
+/** Colour of a point in unit coordinates (-1..1, y pointing down). */
 const shade = (x, y) => {
-  // Blütenblätter: fünf Ellipsen um die Mitte
+  // Petals: five ellipses around the centre
   for (let i = 0; i < 5; i++) {
     const a = (i * 2 * Math.PI) / 5
     const cos = Math.cos(a)
@@ -76,7 +76,7 @@ const shade = (x, y) => {
 
 const render = (size) => {
   const rgba = Buffer.alloc(size * size * 4)
-  const radius = size * 0.22 // Eckenradius des Hintergrunds
+  const radius = size * 0.22 // corner radius of the background
   const samples = 3
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
@@ -88,7 +88,7 @@ const render = (size) => {
         for (let sx = 0; sx < samples; sx++) {
           const px = x + (sx + 0.5) / samples
           const py = y + (sy + 0.5) / samples
-          // Abgerundetes Quadrat als Maske
+          // rounded square used as a mask
           const dx = Math.max(radius - px, px - (size - radius), 0)
           const dy = Math.max(radius - py, py - (size - radius), 0)
           if (Math.hypot(dx, dy) > radius) continue
@@ -114,5 +114,5 @@ const render = (size) => {
 for (const size of [192, 512]) {
   const file = join(OUT_DIR, `icon-${size}.png`)
   writeFileSync(file, render(size))
-  console.log(`geschrieben: ${file}`)
+  console.log(`written: ${file}`)
 }

@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import {
-  AUFTRAGS_WERTE,
+  TASK_VALUES,
   CATEGORIES,
   UNLOCKS,
-  auftragPoints,
+  taskPoints,
   categoryTotal,
   computeTotals,
   createEmptySheet,
@@ -12,69 +12,69 @@ import {
 
 const unlockById = (id: string) => {
   const unlock = UNLOCKS.find((u) => u.id === id)
-  if (!unlock) throw new Error(`Unbekannte Position: ${id}`)
+  if (!unlock) throw new Error(`Unknown entry: ${id}`)
   return unlock
 }
 
-describe('Bogen-Struktur', () => {
-  it('hat die 7 Kategorien des Bogens', () => {
+describe('sheet structure', () => {
+  it('has the seven categories of the sheet', () => {
     expect(CATEGORIES.map((c) => c.key)).toEqual([
-      'kirschbluete',
-      'reisfeld',
-      'dorf',
-      'weg',
-      'wasser',
-      'rundum',
-      'sieben',
+      'cherry',
+      'rice',
+      'village',
+      'road',
+      'river',
+      'wraparound',
+      'seven',
     ])
   })
 
-  it('sperrt die Bonus-Zelle nur bei der 7er-Spalte', () => {
+  it('hatches the bonus cell for the "7" column only', () => {
     const ohneBonus = CATEGORIES.filter((c) => !c.hasBonus)
-    expect(ohneBonus.map((c) => c.key)).toEqual(['sieben'])
+    expect(ohneBonus.map((c) => c.key)).toEqual(['seven'])
   })
 
-  it('hat die 14 freigespielten Positionen', () => {
+  it('has the 14 unlockable entries', () => {
     expect(UNLOCKS).toHaveLength(14)
   })
 
-  it('gibt allen Auftragstypen die Auftragskarten 4/4/5/5/6/6', () => {
-    const mitKarten = CATEGORIES.filter((c) => c.auftragsWerte !== null)
+  it('gives every task type the markers 4/4/5/5/6/6', () => {
+    const mitKarten = CATEGORIES.filter((c) => c.taskValues !== null)
     expect(mitKarten.map((c) => c.key)).toEqual([
-      'kirschbluete',
-      'reisfeld',
-      'dorf',
-      'weg',
-      'wasser',
-      'rundum',
+      'cherry',
+      'rice',
+      'village',
+      'road',
+      'river',
+      'wraparound',
     ])
-    for (const category of mitKarten) expect(category.auftragsWerte).toEqual([4, 4, 5, 5, 6, 6])
+    for (const category of mitKarten) expect(category.taskValues).toEqual([4, 4, 5, 5, 6, 6])
   })
 
-  it('zaehlt in der 7er-Spalte Auftraege statt Karten abzuhaken', () => {
-    const ohneKarten = CATEGORIES.filter((c) => c.auftragsWerte === null)
-    expect(ohneKarten.map((c) => c.key)).toEqual(['sieben'])
-    expect(ohneKarten[0].auftragsFaktor).toBe(7)
+  it('counts tasks in the "7" column instead of ticking markers', () => {
+    const ohneKarten = CATEGORIES.filter((c) => c.taskValues === null)
+    expect(ohneKarten.map((c) => c.key)).toEqual(['seven'])
+    expect(ohneKarten[0].taskFactor).toBe(7)
   })
 
-  it('kommt auf 30 Punkte, wenn alle Auftragskarten erfuellt sind', () => {
-    expect(AUFTRAGS_WERTE.reduce((a, b) => a + b, 0)).toBe(30)
+  it('adds up to 30 points when every marker is completed', () => {
+    expect(TASK_VALUES.reduce((a, b) => a + b, 0)).toBe(30)
   })
 })
 
 describe('createEmptySheet', () => {
-  it('startet bei null Punkten', () => {
-    expect(computeTotals(createEmptySheet()).ergebnis).toBe(0)
+  it('starts at zero points', () => {
+    expect(computeTotals(createEmptySheet()).result).toBe(0)
   })
 
-  it('legt je Gebietsspalte sechs nicht angehakte Auftragskarten an', () => {
+  it('creates six unticked markers per task column', () => {
     const sheet = createEmptySheet()
-    expect(sheet.auftragsChips.dorf).toEqual([false, false, false, false, false, false])
-    expect(sheet.auftragsChips.rundum).toEqual([false, false, false, false, false, false])
-    expect(sheet.auftragsChips.sieben).toEqual([])
+    expect(sheet.taskCards.village).toEqual([false, false, false, false, false, false])
+    expect(sheet.taskCards.wraparound).toEqual([false, false, false, false, false, false])
+    expect(sheet.taskCards.seven).toEqual([])
   })
 
-  it('legt je Feld einen Wert an und nichts ist freigespielt', () => {
+  it('creates one value per field and unlocks nothing', () => {
     const sheet = createEmptySheet()
     for (const unlock of UNLOCKS) {
       expect(sheet.unlocks[unlock.id].enabled).toBe(false)
@@ -84,134 +84,134 @@ describe('createEmptySheet', () => {
 })
 
 describe('unlockPoints', () => {
-  it('zaehlt nicht, solange die Position nicht freigespielt ist', () => {
-    const bruecken = unlockById('bruecken')
-    expect(unlockPoints(bruecken, { enabled: false, values: [3] })).toBe(0)
+  it('does not count while the entry is locked', () => {
+    const bridges = unlockById('bridges')
+    expect(unlockPoints(bridges, { enabled: false, values: [3] })).toBe(0)
   })
 
-  it('multipliziert mit dem Faktor des Bogens', () => {
-    expect(unlockPoints(unlockById('bruecken'), { enabled: true, values: [3] })).toBe(15)
-    expect(unlockPoints(unlockById('tore'), { enabled: true, values: [2] })).toBe(10)
-    expect(unlockPoints(unlockById('kartograph'), { enabled: true, values: [4] })).toBe(8)
+  it('multiplies by the factor printed on the sheet', () => {
+    expect(unlockPoints(unlockById('bridges'), { enabled: true, values: [3] })).toBe(15)
+    expect(unlockPoints(unlockById('gates'), { enabled: true, values: [2] })).toBe(10)
+    expect(unlockPoints(unlockById('cartographer'), { enabled: true, values: [4] })).toBe(8)
     expect(unlockPoints(unlockById('poet'), { enabled: true, values: [5] })).toBe(15)
-    expect(unlockPoints(unlockById('sumoringer'), { enabled: true, values: [7] })).toBe(7)
+    expect(unlockPoints(unlockById('sumoWrestler'), { enabled: true, values: [7] })).toBe(7)
   })
 
-  it('wertet jeden umschlossenen Tempel mit 6 Punkten, hoechstens 3 Tempel', () => {
-    const tempel = unlockById('tempel')
-    expect(tempel.fields[0].max).toBe(3)
-    expect(unlockPoints(tempel, { enabled: true, values: [0] })).toBe(0)
-    expect(unlockPoints(tempel, { enabled: true, values: [3] })).toBe(18)
+  it('scores 6 points per enclosed temple, at most three temples', () => {
+    const temples = unlockById('temples')
+    expect(temples.fields[0].max).toBe(3)
+    expect(unlockPoints(temples, { enabled: true, values: [0] })).toBe(0)
+    expect(unlockPoints(temples, { enabled: true, values: [3] })).toBe(18)
   })
 
-  it('addiert bei Heissen Quellen beide Regeln: 3 je Quelle und 3 je Rundumauftrag', () => {
-    const quellen = unlockById('heisseQuellen')
+  it('adds both hot spring rules: 3 per spring and 3 per Wraparound Task', () => {
+    const quellen = unlockById('hotSprings')
     expect(unlockPoints(quellen, { enabled: true, values: [2, 3] })).toBe(15)
     expect(unlockPoints(quellen, { enabled: true, values: [0, 3] })).toBe(9)
   })
 
-  it('nimmt bei Kirschblueten den Wert direkt als Punkte', () => {
-    expect(unlockPoints(unlockById('kirschbluetenGesammelt'), { enabled: true, values: [9] })).toBe(9)
+  it('takes the cherry blossom value as points directly', () => {
+    expect(unlockPoints(unlockById('cherryBlossoms'), { enabled: true, values: [9] })).toBe(9)
   })
 
-  it('kommt mit fehlenden Werten klar', () => {
-    expect(unlockPoints(unlockById('heisseQuellen'), { enabled: true, values: [] })).toBe(0)
+  it('copes with missing values', () => {
+    expect(unlockPoints(unlockById('hotSprings'), { enabled: true, values: [] })).toBe(0)
   })
 })
 
-describe('auftragPoints', () => {
-  it('summiert nur die angehakten Auftragskarten', () => {
+describe('taskPoints', () => {
+  it('sums the ticked markers only', () => {
     const sheet = createEmptySheet()
     // 4 + 4 + 5 + 5 + 6 = 24
-    sheet.auftragsChips.kirschbluete = [true, true, true, true, true, false]
-    expect(auftragPoints(sheet, 'kirschbluete')).toBe(24)
+    sheet.taskCards.cherry = [true, true, true, true, true, false]
+    expect(taskPoints(sheet, 'cherry')).toBe(24)
   })
 
-  it('ergibt 30, wenn alle sechs Karten angehakt sind', () => {
+  it('yields 30 when all six markers are ticked', () => {
     const sheet = createEmptySheet()
-    sheet.auftragsChips.dorf = [true, true, true, true, true, true]
-    expect(auftragPoints(sheet, 'dorf')).toBe(30)
+    sheet.taskCards.village = [true, true, true, true, true, true]
+    expect(taskPoints(sheet, 'village')).toBe(30)
   })
 
-  it('ignoriert bei Kartenspalten einen frei eingetippten Wert', () => {
+  it('ignores a typed value in columns that use markers', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.wasser = 99
-    sheet.auftragsChips.wasser = [false, false, true, false, true, false]
-    expect(auftragPoints(sheet, 'wasser')).toBe(11)
+    sheet.tasks.river = 99
+    sheet.taskCards.river = [false, false, true, false, true, false]
+    expect(taskPoints(sheet, 'river')).toBe(11)
   })
 
-  it('hakt bei Rundumauftraegen dieselben Karten ab wie bei den Gebieten', () => {
+  it('uses the same markers for Wraparound Tasks as for the terrains', () => {
     const sheet = createEmptySheet()
-    sheet.auftragsChips.rundum = [false, false, false, false, true, false] // 6
-    expect(auftragPoints(sheet, 'rundum')).toBe(6)
+    sheet.taskCards.wraparound = [false, false, false, false, true, false] // 6
+    expect(taskPoints(sheet, 'wraparound')).toBe(6)
   })
 
-  it('rechnet in der 7er-Spalte Anzahl x 7', () => {
+  it('multiplies the amount by 7 in the "7" column', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.sieben = 2
-    expect(auftragPoints(sheet, 'sieben')).toBe(14)
+    sheet.tasks.seven = 2
+    expect(taskPoints(sheet, 'seven')).toBe(14)
   })
 })
 
 describe('categoryTotal', () => {
-  it('addiert Auftrags- und Bonuszeile', () => {
+  it('adds the task row and the bonus row', () => {
     const sheet = createEmptySheet()
     // 4 + 4 + 5 + 6 = 19
-    sheet.auftragsChips.weg = [true, true, true, false, true, false]
-    sheet.bonus.weg = 9
-    expect(categoryTotal(sheet, 'weg')).toBe(28)
+    sheet.taskCards.road = [true, true, true, false, true, false]
+    sheet.bonus.road = 9
+    expect(categoryTotal(sheet, 'road')).toBe(28)
   })
 
-  it('ignoriert einen Bonuswert in der schraffierten 7er-Spalte', () => {
+  it('ignores a bonus value in the hatched "7" column', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.sieben = 1
-    sheet.bonus.sieben = 99
-    expect(categoryTotal(sheet, 'sieben')).toBe(7)
+    sheet.tasks.seven = 1
+    sheet.bonus.seven = 99
+    expect(categoryTotal(sheet, 'seven')).toBe(7)
   })
 })
 
 describe('computeTotals', () => {
-  it('summiert die obere Tabelle zeilenweise', () => {
+  it('sums the upper table row by row', () => {
     const sheet = createEmptySheet()
-    sheet.auftragsChips.kirschbluete = [true, true, true, true, true, false] // 24
-    sheet.auftragsChips.reisfeld = [true, true, false, true, false, true] // 4+4+5+6 = 19
-    sheet.auftragsChips.dorf = [true, true, false, true, true, true] // 4+4+5+6+6 = 25
-    sheet.auftragsChips.weg = [true, true, true, false, true, false] // 19
-    sheet.auftragsChips.wasser = [false, false, true, false, true, false] // 11
-    sheet.auftragsChips.rundum = [false, false, false, false, true, false] // 6
-    sheet.auftraege.sieben = 1 // Doppelauftrag = 7 Punkte
-    sheet.bonus.kirschbluete = 3
-    sheet.bonus.reisfeld = 2
-    sheet.bonus.dorf = 4
-    sheet.bonus.weg = 9
-    sheet.bonus.wasser = 6
-    sheet.bonus.rundum = 4
+    sheet.taskCards.cherry = [true, true, true, true, true, false] // 24
+    sheet.taskCards.rice = [true, true, false, true, false, true] // 4+4+5+6 = 19
+    sheet.taskCards.village = [true, true, false, true, true, true] // 4+4+5+6+6 = 25
+    sheet.taskCards.road = [true, true, true, false, true, false] // 19
+    sheet.taskCards.river = [false, false, true, false, true, false] // 11
+    sheet.taskCards.wraparound = [false, false, false, false, true, false] // 6
+    sheet.tasks.seven = 1 // double task = 7 points
+    sheet.bonus.cherry = 3
+    sheet.bonus.rice = 2
+    sheet.bonus.village = 4
+    sheet.bonus.road = 9
+    sheet.bonus.river = 6
+    sheet.bonus.wraparound = 4
 
     const totals = computeTotals(sheet)
-    expect(totals.proAuftrag.dorf).toBe(25)
-    expect(totals.auftraege).toBe(24 + 19 + 25 + 19 + 11 + 6 + 7)
+    expect(totals.perCategoryTasks.village).toBe(25)
+    expect(totals.tasks).toBe(24 + 19 + 25 + 19 + 11 + 6 + 7)
     expect(totals.bonus).toBe(28)
-    expect(totals.freigespielt).toBe(0)
-    expect(totals.ergebnis).toBe(111 + 28)
+    expect(totals.unlocked).toBe(0)
+    expect(totals.result).toBe(111 + 28)
   })
 
-  it('rechnet obere Tabelle und Freigespieltes zum Ergebnis zusammen', () => {
+  it('adds the upper table and the unlocked block into the result', () => {
     const sheet = createEmptySheet()
-    sheet.auftragsChips.dorf = [true, false, true, false, false, false] // 9
-    sheet.bonus.dorf = 5
-    sheet.unlocks.bruecken = { enabled: true, values: [2] }
-    sheet.unlocks.heisseQuellen = { enabled: true, values: [1, 2] }
+    sheet.taskCards.village = [true, false, true, false, false, false] // 9
+    sheet.bonus.village = 5
+    sheet.unlocks.bridges = { enabled: true, values: [2] }
+    sheet.unlocks.hotSprings = { enabled: true, values: [1, 2] }
 
     const totals = computeTotals(sheet)
-    expect(totals.proUnlock.bruecken).toBe(10)
-    expect(totals.proUnlock.heisseQuellen).toBe(9)
-    expect(totals.freigespielt).toBe(19)
-    expect(totals.ergebnis).toBe(33)
+    expect(totals.perUnlock.bridges).toBe(10)
+    expect(totals.perUnlock.hotSprings).toBe(9)
+    expect(totals.unlocked).toBe(19)
+    expect(totals.result).toBe(33)
   })
 
-  it('zaehlt abgehakte, aber leere Positionen mit 0', () => {
+  it('counts unlocked but empty entries as 0', () => {
     const sheet = createEmptySheet()
     sheet.unlocks.poet = { enabled: true, values: [0] }
-    expect(computeTotals(sheet).ergebnis).toBe(0)
+    expect(computeTotals(sheet).result).toBe(0)
   })
 })

@@ -1,102 +1,98 @@
-# Dorfromantik Sakura – Wertungsblock
+# Dorfromantik Sakura Score Pad
 
-Digitaler Wertungsblock für **Dorfromantik: Das Duell – Sakura**. Kleine
-Vue-3-Webapp, handy-optimiert, ohne Backend.
+A digital score pad for **Dorfromantik: Sakura**. Small Vue 3 web app, built for
+phones, no backend.
 
-## Was die App macht
+## What it does
 
-**Obere Tabelle** – die sieben Kategorien des Bogens (Kirschblüten, Reisfelder,
-Dorf, Wege, Wasser, Rundumaufträge, 7) mit je einer Auftrags-Zeile und einer
-zweiten Zeile:
+**Upper table** – the seven categories of the printed sheet (cherry trees, rice
+fields, villages, roads, rivers, Wraparound Tasks, "7"), each with a task row
+and a bonus row:
 
-| Kategorie | Zweite Zeile |
+| Category | Bonus row |
 | --- | --- |
-| Kirschblüten / Reisfelder / Dorf | Fahnen |
-| Wege | längste Straße |
-| Wasser | längster Fluss |
-| Rundumaufträge | +2 je Rundumauftrag an längster Straße / längstem Fluss |
-| 7 | schraffiert, keine Eingabe |
+| Cherry trees / Rice fields / Villages | Flags |
+| Roads | longest Road |
+| Rivers | longest River |
+| Wraparound Tasks | +2 per Wraparound Task on the longest Road / River |
+| 7 | hatched, no input |
 
-Sechs der sieben Spalten haben eine feste Auftragsmenge: die Auftragsmarker
-zeigen „je Typ je 2× die Werte 4, 5 und 6", zusammen 30 – das gilt für
-Kirschblüten, Reisfelder, Dorf, Wege, Wasser und ebenso für die Rundumaufträge.
-Sie werden als sechs Chips angetippt statt eingetippt, damit sind genau die
-erreichbaren Summen möglich und eine volle Spalte kostet sechs Taps. Nur in der
-7er-Spalte wird die Anzahl erfüllter Doppelaufträge eingetippt (× 7 Punkte). Die
-zweite Zeile
-(Fahnen / längste / +2) wird frei eingetippt: Fahnen zählen die Plättchen des
-Fahnengebiets, aber nur wenn es abgeschlossen ist, längste Straße und längster
-Fluss die Plättchen der jeweils längsten Verbindung.
+Six of the seven columns have a fixed set of task markers: the rules state that
+they show "the values 4, 5 and 6, twice each" per type, 30 points in total –
+that covers cherry trees, rice fields, villages, roads, rivers and Wraparound
+Tasks alike. They are tapped as six markers rather than typed, so only reachable
+sums are possible and a full column takes six taps. Only the "7" column takes
+the number of completed double tasks (× 7 points). The bonus row is typed in:
+Flags count the tiles of the flag territory, but only if it is complete; longest
+Road and longest River count the tiles of the respective connection.
 
-**Freigespielt** – die 14 Positionen des unteren Blocks. Eine Position zählt
-erst, wenn sie abgehakt ist; dann erscheinen ihre Eingabefelder. Wo der Bogen
-einen Faktor vorgibt, wird gerechnet (z.B. 3 Brücken × 5 = 15 Punkte). Tempel
-sind auf 3 begrenzt, weil es nur 3 Tempelplättchen gibt; Heiße Quellen haben
-zwei Felder (abgeschlossene Quellen × 3 und Rundumaufträge × 3).
-Gesammelte Kirschblüten haben keinen Faktor und werden als Punktzahl eingetippt.
+**Unlocked** – the 14 entries of the lower block. An entry only counts once it is
+ticked; its input fields appear then. Where the sheet gives a factor, the app
+does the maths (e.g. 3 bridges × 5 = 15 points). Temples are capped at 3 because
+there are only three temple tiles; hot springs have two fields (completed
+springs × 3 and Wraparound Tasks × 3). Collected cherry blossoms have no factor
+and are entered as points.
 
-**Ergebnis** klebt sichtbar am unteren Rand. Die laufende Partie wird im
-`localStorage` gesichert und überlebt Reload und Tab-Wechsel; „Neue Partie"
-leert den Bogen. Eine Historie alter Partien gibt es bewusst nicht.
+The factors come from the official score pad and rules published by Pegasus
+Spiele (as of 07/2025).
 
-Die App ist eine PWA: auf dem Handy zum Homescreen hinzufügen, danach läuft sie
-auch ohne Netz.
+**Result** sticks to the bottom of the screen. The current game is stored in
+`localStorage` and survives a reload or a tab switch; "New game" clears the
+sheet. There is deliberately no history of past games.
 
-## Sprachen
+The app is a PWA: add it to the home screen on a phone and it also runs offline.
 
-Die App spricht die sechs Sprachen, in denen das Spiel erschienen ist: Deutsch,
-Englisch, Französisch, Italienisch, Spanisch und Polnisch. Beim ersten Aufruf
-wird die Sprache des Geräts übernommen (Fallback Englisch), oben rechts lässt
-sie sich umstellen, die Wahl wird gemerkt.
+## Languages
 
-**Deutsch und Englisch** verwenden die offizielle Terminologie der Pegasus-
-Wertungsblätter (`Aufträge`/`Tasks`, `Fahnen`/`Flags`, `Freigespielt`/`Unlocked`,
-`Rundumaufträge`/`Wraparound Tasks`). **Französisch, Italienisch, Spanisch und
-Polnisch** sind eigene Übersetzungen – inhaltlich korrekt, aber möglicherweise
-nicht wortgleich mit dem gedruckten Block des jeweiligen Verlags (Gigamic, Red
-Glove, IUVI Games). Korrekturen sind einzeilig in `src/lib/messages.ts`.
+The app speaks the six languages the game was published in: German, English,
+French, Italian, Spanish and Polish. On first visit it follows the device
+language (falling back to English), the switcher sits in the top right, and the
+choice is remembered.
 
-Die Texte liegen vollständig in `src/lib/messages.ts`; `src/lib/scoring.ts`
-enthält nur noch Struktur und Faktoren. `src/lib/i18n.test.ts` prüft für jede
-Sprache, dass kein Text fehlt und keiner zu viel ist – eine neue Sprache
-hinzufügen heißt: Eintrag in `LOCALES`, Block in `MESSAGES`, Tests laufen lassen.
+**German and English** use the official terminology of the Pegasus score pads
+(`Aufträge`/`Tasks`, `Fahnen`/`Flags`, `Freigespielt`/`Unlocked`,
+`Rundumaufträge`/`Wraparound Tasks`). **French, Italian, Spanish and Polish** are
+our own translations – correct in substance, but possibly not word for word
+identical to the pad printed by the local publisher (Gigamic, Red Glove, IUVI
+Games). Corrections are a one-line change in `src/lib/messages.ts`.
 
-## Entwicklung
+All strings live in `src/lib/messages.ts`; `src/lib/scoring.ts` carries structure
+and factors only. `src/lib/i18n.test.ts` checks every language for missing and
+surplus strings – adding a language means an entry in `LOCALES`, a block in
+`MESSAGES`, and running the tests.
+
+## Development
 
 ```bash
 npm install
-npm run dev       # Dev-Server auf http://localhost:5173
-npm test          # Unit-Tests der Punktelogik
-npm run build     # Produktionsbuild nach dist/
-npm run preview   # Build lokal ausliefern
-npm run icons     # PWA-Icons neu generieren (public/icon-*.png)
+npm run dev       # dev server on http://localhost:5173
+npm test          # unit tests of the scoring logic
+npm run build     # production build into dist/
+npm run preview   # serve the build locally
+npm run icons     # regenerate the PWA icons (public/icon-*.png)
 ```
 
-Die Faktoren stammen aus dem offiziellen Wertungsblatt und der Anleitung von
-Pegasus Spiele (Stand 07/2025).
+The entire scoring logic lives in `src/lib/scoring.ts` and is covered by
+`src/lib/scoring.test.ts`. Categories, unlockable entries and their factors are
+plain data there – when a rule changes, one place needs an edit.
 
-Die gesamte Punktelogik steckt in `src/lib/scoring.ts` und ist über
-`src/lib/scoring.test.ts` abgedeckt. Kategorien, freigespielte Positionen und
-ihre Faktoren sind dort als Daten hinterlegt – ändert sich eine Regel, reicht
-eine Anpassung an genau einer Stelle.
-
-## Deployment im Homelab
+## Deployment
 
 ```bash
 docker compose up -d --build
 ```
 
-Danach erreichbar unter `http://192.168.178.55:30028`.
+Reachable at `http://192.168.178.55:30028` afterwards.
 
-Für den externen Zugriff im Cloudflare-Tunnel `marzl-home` eine Public-Hostname-
-Route ergänzen:
+For external access through the `marzl-home` Cloudflare tunnel, add a public
+hostname route:
 
-| Feld | Wert |
+| Field | Value |
 | --- | --- |
 | Subdomain | `dorfromantik` |
 | Domain | `marzl.uk` |
 | Service | `http://192.168.178.55:30028` |
 
-Der Service Worker wird per `registerType: 'autoUpdate'` erneuert; `sw.js` und
-`manifest.webmanifest` liefert nginx bewusst ohne Cache aus, damit ein neuer
-Build auf bereits installierten Geräten ankommt.
+The service worker refreshes itself via `registerType: 'autoUpdate'`; nginx
+deliberately serves `sw.js` and `manifest.webmanifest` without caching so a new
+build reaches devices that already installed the app.
