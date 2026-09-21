@@ -36,7 +36,7 @@ const neuePartie = () => {
         <h2 class="sr-only">Zwischensummen</h2>
         <dl>
           <div><dt>Aufträge</dt><dd>{{ totals.auftraege }}</dd></div>
-          <div><dt>Fahnen / längste / +2</dt><dd>{{ totals.bonus }}</dd></div>
+          <div><dt>Fahnen &amp; Längste</dt><dd>{{ totals.bonus }}</dd></div>
           <div><dt>Freigespielt</dt><dd>{{ totals.freigespielt }}</dd></div>
         </dl>
       </section>

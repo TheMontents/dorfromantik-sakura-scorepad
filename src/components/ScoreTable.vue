@@ -13,7 +13,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
       <h2>Aufträge</h2>
       <div class="head-sums">
         <span>Aufträge {{ totals.auftraege }}</span>
-        <span>Zeile 2 {{ totals.bonus }}</span>
+        <span>Fahnen &amp; Längste {{ totals.bonus }}</span>
       </div>
     </header>
 
