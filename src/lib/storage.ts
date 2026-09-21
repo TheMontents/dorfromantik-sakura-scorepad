@@ -1,6 +1,6 @@
 import { CATEGORIES, UNLOCKS, createEmptySheet, type Sheet } from './scoring'
 
-const STORAGE_KEY = 'dorfromantik-sakura:aktuelle-partie'
+const STORAGE_KEY = 'dorfromantik-sakura:aktuelle-partie:v2'
 
 const toNumber = (value: unknown): number => {
   const n = Number(value)
@@ -37,7 +37,7 @@ export function loadSheet(): Sheet {
         enabled: storedUnlock?.enabled === true,
         values: unlock.fields.map((field, index) => {
           const value = toNumber(storedUnlock?.values?.[index])
-          return field.jaNein ? Math.min(1, value) : value
+          return field.max === undefined ? value : Math.min(field.max, value)
         }),
       }
     }

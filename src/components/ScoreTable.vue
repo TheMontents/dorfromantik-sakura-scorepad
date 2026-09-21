@@ -30,8 +30,10 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
         <div class="row-body">
           <div class="auftraege">
             <span class="field-label">
-              Aufträge
-              <em v-if="category.auftragsWerte">{{ totals.proAuftrag[category.key] }}</em>
+              {{ category.auftragsFaktor ? 'Erfüllte Aufträge' : 'Aufträge' }}
+              <em v-if="category.auftragsWerte || category.auftragsFaktor">
+                {{ totals.proAuftrag[category.key] }} Pkt
+              </em>
             </span>
             <AuftragsChips
               v-if="category.auftragsWerte"
@@ -39,12 +41,16 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
               :werte="category.auftragsWerte"
               :kategorie="category.label"
             />
-            <NumberField
-              v-else
-              v-model="sheet.auftraege[category.key]"
-              label="Aufträge"
-              hide-label
-            />
+            <div v-else class="frei">
+              <NumberField
+                v-model="sheet.auftraege[category.key]"
+                :label="category.auftragsFaktor ? 'Anzahl' : 'Aufträge'"
+                hide-label
+              />
+              <span v-if="category.auftragsFaktor" class="faktor">
+                × {{ category.auftragsFaktor }} Punkte
+              </span>
+            </div>
           </div>
 
           <NumberField
@@ -142,6 +148,24 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
   font-style: normal;
   font-variant-numeric: tabular-nums;
   color: var(--sakura-700);
+}
+
+.frei {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.frei > :first-child {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.faktor {
+  flex: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
 }
 
 .bonus {

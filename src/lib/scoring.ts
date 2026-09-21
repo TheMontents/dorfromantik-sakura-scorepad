@@ -27,9 +27,15 @@ export interface Category {
   label: string
   /**
    * Werte der Auftragskarten dieser Kategorie, die einzeln abgehakt werden.
-   * `null` = keine feste Kartenmenge, Punkte werden frei eingetippt.
+   * `null` = keine feste Kartenmenge.
    */
   auftragsWerte: number[] | null
+  /**
+   * Punkte je erfülltem Auftrag, wenn es keine feste Kartenmenge gibt:
+   * eingetippt wird dann die Anzahl. Ohne Angabe wird die Punktzahl direkt
+   * eingetippt.
+   */
+  auftragsFaktor?: number
   /** Beschriftung der zweiten Zeile; null = schraffiert, keine Eingabe */
   bonusLabel: string | null
   /** Langtext der zweiten Zeile (Tooltip / Hilfezeile) */
@@ -37,22 +43,40 @@ export interface Category {
 }
 
 export const CATEGORIES: Category[] = [
-  { key: 'kirschbluete', label: 'Kirschblüten', auftragsWerte: AUFTRAGS_WERTE, bonusLabel: 'Fahnen' },
-  { key: 'reisfeld', label: 'Reisfelder', auftragsWerte: AUFTRAGS_WERTE, bonusLabel: 'Fahnen' },
-  { key: 'dorf', label: 'Dorf', auftragsWerte: AUFTRAGS_WERTE, bonusLabel: 'Fahnen' },
+  {
+    key: 'kirschbluete',
+    label: 'Kirschblüten',
+    auftragsWerte: AUFTRAGS_WERTE,
+    bonusLabel: 'Fahnen',
+    bonusHint: 'Rosa Fahne: Plättchen des Gebiets, aber nur wenn es abgeschlossen ist',
+  },
+  {
+    key: 'reisfeld',
+    label: 'Reisfelder',
+    auftragsWerte: AUFTRAGS_WERTE,
+    bonusLabel: 'Fahnen',
+    bonusHint: 'Grüne Fahne: Plättchen des Gebiets, aber nur wenn es abgeschlossen ist',
+  },
+  {
+    key: 'dorf',
+    label: 'Dorf',
+    auftragsWerte: AUFTRAGS_WERTE,
+    bonusLabel: 'Fahnen',
+    bonusHint: 'Rote Fahne: Plättchen des Gebiets, aber nur wenn es abgeschlossen ist',
+  },
   {
     key: 'weg',
     label: 'Wege',
     auftragsWerte: AUFTRAGS_WERTE,
     bonusLabel: 'längste',
-    bonusHint: 'Punkte für die längste Straße',
+    bonusHint: 'Anzahl Plättchen der längsten Straße',
   },
   {
     key: 'wasser',
     label: 'Wasser',
     auftragsWerte: AUFTRAGS_WERTE,
     bonusLabel: 'längste',
-    bonusHint: 'Punkte für den längsten Fluss',
+    bonusHint: 'Anzahl Plättchen des längsten Flusses',
   },
   {
     key: 'rundum',
@@ -61,7 +85,13 @@ export const CATEGORIES: Category[] = [
     bonusLabel: 'längste = +2',
     bonusHint: '+2 je Rundumauftrag an der längsten Straße / am längsten Fluss',
   },
-  { key: 'sieben', label: '7', auftragsWerte: null, bonusLabel: null },
+  {
+    key: 'sieben',
+    label: '7',
+    auftragsWerte: null,
+    auftragsFaktor: 7,
+    bonusLabel: null,
+  },
 ]
 
 const byKey = (key: CategoryKey) => CATEGORIES.find((c) => c.key === key)
@@ -77,10 +107,8 @@ export interface UnlockField {
    * bereits die Punktzahl (Bogen gibt keinen Faktor vor).
    */
   factor: number | null
-  /**
-   * Ja/Nein statt Anzahl: der Wert ist nur 0 oder 1, Ja gibt `factor` Punkte.
-   */
-  jaNein?: boolean
+  /** Obergrenze der Eingabe, wo das Material sie vorgibt */
+  max?: number
 }
 
 export interface Unlock {
@@ -102,14 +130,14 @@ export const UNLOCKS: Unlock[] = [
     id: 'tempel',
     label: 'Tempel',
     hint: 'passend umschlossen = 6',
-    fields: [{ label: 'Passend umschlossen', factor: 6, jaNein: true }],
+    fields: [{ label: 'Umschlossene Tempel', factor: 6, max: 3 }],
   },
   {
     id: 'heisseQuellen',
     label: 'Heiße Quellen',
     hint: 'abgeschlossen = 3 · 3/Rundumauftrag',
     fields: [
-      { label: 'Abgeschlossen', factor: 3, jaNein: true },
+      { label: 'Abgeschlossene Quellen', factor: 3 },
       { label: 'Rundumaufträge', factor: 3 },
     ],
   },
@@ -227,8 +255,9 @@ export function unlockPoints(unlock: Unlock, state: UnlockState | undefined): nu
  * frei eingetippte Wert.
  */
 export function auftragPoints(sheet: Sheet, key: CategoryKey): number {
-  const werte = byKey(key)?.auftragsWerte
-  if (!werte) return sheet.auftraege[key] ?? 0
+  const category = byKey(key)
+  const werte = category?.auftragsWerte
+  if (!werte) return (sheet.auftraege[key] ?? 0) * (category?.auftragsFaktor ?? 1)
   const chips = sheet.auftragsChips[key] ?? []
   return werte.reduce((sum, wert, index) => sum + (chips[index] ? wert : 0), 0)
 }

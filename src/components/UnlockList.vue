@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import BoolField from './BoolField.vue'
 import NumberField from './NumberField.vue'
 import { UNLOCKS, type Sheet, type Totals } from '../lib/scoring'
 
@@ -37,13 +36,12 @@ const factorText = (factor: number | null) => (factor === null ? '' : `× ${fact
 
         <div v-if="sheet.unlocks[unlock.id].enabled" class="unlock-fields">
           <div v-for="(field, index) in unlock.fields" :key="index" class="unlock-field">
-            <BoolField
-              v-if="field.jaNein"
+            <NumberField
               v-model="sheet.unlocks[unlock.id].values[index]"
               :label="field.label"
+              :max="field.max ?? 999"
             />
-            <NumberField v-else v-model="sheet.unlocks[unlock.id].values[index]" :label="field.label" />
-            <p v-if="field.factor !== null && !field.jaNein" class="calc">
+            <p v-if="field.factor !== null" class="calc">
               {{ factorText(field.factor) }} =
               <strong>{{ (sheet.unlocks[unlock.id].values[index] ?? 0) * field.factor }}</strong>
               Pkt

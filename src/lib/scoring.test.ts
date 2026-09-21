@@ -94,18 +94,16 @@ describe('unlockPoints', () => {
     expect(unlockPoints(unlockById('sumoringer'), { enabled: true, values: [7] })).toBe(7)
   })
 
-  it('wertet den Tempel als Ja/Nein mit 6 Punkten', () => {
+  it('wertet jeden umschlossenen Tempel mit 6 Punkten, hoechstens 3 Tempel', () => {
     const tempel = unlockById('tempel')
-    expect(tempel.fields[0].jaNein).toBe(true)
+    expect(tempel.fields[0].max).toBe(3)
     expect(unlockPoints(tempel, { enabled: true, values: [0] })).toBe(0)
-    expect(unlockPoints(tempel, { enabled: true, values: [1] })).toBe(6)
+    expect(unlockPoints(tempel, { enabled: true, values: [3] })).toBe(18)
   })
 
-  it('addiert bei Heissen Quellen beide Regeln: abgeschlossen ja/nein und 3 je Rundumauftrag', () => {
+  it('addiert bei Heissen Quellen beide Regeln: 3 je Quelle und 3 je Rundumauftrag', () => {
     const quellen = unlockById('heisseQuellen')
-    expect(quellen.fields[0].jaNein).toBe(true)
-    expect(quellen.fields[1].jaNein).toBeUndefined()
-    expect(unlockPoints(quellen, { enabled: true, values: [1, 3] })).toBe(12)
+    expect(unlockPoints(quellen, { enabled: true, values: [2, 3] })).toBe(15)
     expect(unlockPoints(quellen, { enabled: true, values: [0, 3] })).toBe(9)
   })
 
@@ -139,12 +137,16 @@ describe('auftragPoints', () => {
     expect(auftragPoints(sheet, 'wasser')).toBe(11)
   })
 
-  it('nimmt bei Rundumauftraegen und der 7 den eingetippten Wert', () => {
+  it('nimmt bei Rundumauftraegen den eingetippten Wert unveraendert', () => {
     const sheet = createEmptySheet()
     sheet.auftraege.rundum = 6
-    sheet.auftraege.sieben = 7
     expect(auftragPoints(sheet, 'rundum')).toBe(6)
-    expect(auftragPoints(sheet, 'sieben')).toBe(7)
+  })
+
+  it('rechnet in der 7er-Spalte Anzahl x 7', () => {
+    const sheet = createEmptySheet()
+    sheet.auftraege.sieben = 2
+    expect(auftragPoints(sheet, 'sieben')).toBe(14)
   })
 })
 
@@ -159,7 +161,7 @@ describe('categoryTotal', () => {
 
   it('ignoriert einen Bonuswert in der schraffierten 7er-Spalte', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.sieben = 7
+    sheet.auftraege.sieben = 1
     sheet.bonus.sieben = 99
     expect(categoryTotal(sheet, 'sieben')).toBe(7)
   })
@@ -174,7 +176,7 @@ describe('computeTotals', () => {
     sheet.auftragsChips.weg = [true, true, true, false, true, false] // 19
     sheet.auftragsChips.wasser = [false, false, true, false, true, false] // 11
     sheet.auftraege.rundum = 6
-    sheet.auftraege.sieben = 7
+    sheet.auftraege.sieben = 1 // Doppelauftrag = 7 Punkte
     sheet.bonus.kirschbluete = 3
     sheet.bonus.reisfeld = 2
     sheet.bonus.dorf = 4

@@ -18,18 +18,21 @@ zweiten Zeile:
 | 7 | schraffiert, keine Eingabe |
 
 Die fünf Gebietsspalten (Kirschblüten, Reisfelder, Dorf, Wege, Wasser) haben eine
-feste Auftragsmenge: je zweimal 4, 5 und 6 Punkte, zusammen 30. Sie werden als
-sechs Chips angetippt statt eingetippt – damit sind genau die erreichbaren
-Summen möglich und eine volle Spalte kostet sechs Taps. Rundumaufträge und die
-7er-Spalte haben keine feste Kartenmenge und bleiben ein Zahlenfeld; die zweite
-Zeile (Fahnen / längste / +2) wird ebenfalls frei eingetippt.
+feste Auftragsmenge: laut Anleitung zeigen die Auftragsmarker „je Typ je 2× die
+Werte 4, 5 und 6", zusammen 30. Sie werden als sechs Chips angetippt statt
+eingetippt – damit sind genau die erreichbaren Summen möglich und eine volle
+Spalte kostet sechs Taps. In der 7er-Spalte wird die Anzahl erfüllter
+Doppelaufträge eingetippt (× 7 Punkte), bei den Rundumaufträgen die Punktzahl
+direkt, weil deren Werte erst mit dem Erfolg ins Spiel kommen. Die zweite Zeile
+(Fahnen / längste / +2) wird frei eingetippt: Fahnen zählen die Plättchen des
+Fahnengebiets, aber nur wenn es abgeschlossen ist, längste Straße und längster
+Fluss die Plättchen der jeweils längsten Verbindung.
 
 **Freigespielt** – die 14 Positionen des unteren Blocks. Eine Position zählt
 erst, wenn sie abgehakt ist; dann erscheinen ihre Eingabefelder. Wo der Bogen
-einen Faktor vorgibt, wird gerechnet (z.B. 3 Brücken × 5 = 15 Punkte). Wo es
-nichts zu zählen gibt, steht ein Ja/Nein-Schalter: Tempel (passend umschlossen =
-6) und der erste Teil der Heißen Quellen (abgeschlossen = 3); deren zweiter Teil
-zählt 3 Punkte je Rundumauftrag.
+einen Faktor vorgibt, wird gerechnet (z.B. 3 Brücken × 5 = 15 Punkte). Tempel
+sind auf 3 begrenzt, weil es nur 3 Tempelplättchen gibt; Heiße Quellen haben
+zwei Felder (abgeschlossene Quellen × 3 und Rundumaufträge × 3).
 Gesammelte Kirschblüten haben keinen Faktor und werden als Punktzahl eingetippt.
 
 **Ergebnis** klebt sichtbar am unteren Rand. Die laufende Partie wird im
@@ -49,6 +52,9 @@ npm run build     # Produktionsbuild nach dist/
 npm run preview   # Build lokal ausliefern
 npm run icons     # PWA-Icons neu generieren (public/icon-*.png)
 ```
+
+Die Faktoren stammen aus dem offiziellen Wertungsblatt und der Anleitung von
+Pegasus Spiele (Stand 07/2025).
 
 Die gesamte Punktelogik steckt in `src/lib/scoring.ts` und ist über
 `src/lib/scoring.test.ts` abgedeckt. Kategorien, freigespielte Positionen und

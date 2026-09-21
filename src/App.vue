@@ -21,7 +21,7 @@ const neuePartie = () => {
 <template>
   <div class="app">
     <header class="top">
-      <p class="eyebrow">Dorfromantik · Das Duell</p>
+      <p class="eyebrow">Dorfromantik</p>
       <h1>Sakura Wertungsblock</h1>
     </header>
 
