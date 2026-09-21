@@ -38,7 +38,7 @@ describe('Bogen-Struktur', () => {
     expect(UNLOCKS).toHaveLength(14)
   })
 
-  it('gibt den 5 Gebietsspalten die Auftragskarten 4/4/5/5/6/6', () => {
+  it('gibt allen Auftragstypen die Auftragskarten 4/4/5/5/6/6', () => {
     const mitKarten = CATEGORIES.filter((c) => c.auftragsWerte !== null)
     expect(mitKarten.map((c) => c.key)).toEqual([
       'kirschbluete',
@@ -46,13 +46,15 @@ describe('Bogen-Struktur', () => {
       'dorf',
       'weg',
       'wasser',
+      'rundum',
     ])
     for (const category of mitKarten) expect(category.auftragsWerte).toEqual([4, 4, 5, 5, 6, 6])
   })
 
-  it('laesst Rundumauftraege und die 7er-Spalte frei eintippen', () => {
+  it('zaehlt in der 7er-Spalte Auftraege statt Karten abzuhaken', () => {
     const ohneKarten = CATEGORIES.filter((c) => c.auftragsWerte === null)
-    expect(ohneKarten.map((c) => c.key)).toEqual(['rundum', 'sieben'])
+    expect(ohneKarten.map((c) => c.key)).toEqual(['sieben'])
+    expect(ohneKarten[0].auftragsFaktor).toBe(7)
   })
 
   it('kommt auf 30 Punkte, wenn alle Auftragskarten erfuellt sind', () => {
@@ -68,7 +70,8 @@ describe('createEmptySheet', () => {
   it('legt je Gebietsspalte sechs nicht angehakte Auftragskarten an', () => {
     const sheet = createEmptySheet()
     expect(sheet.auftragsChips.dorf).toEqual([false, false, false, false, false, false])
-    expect(sheet.auftragsChips.rundum).toEqual([])
+    expect(sheet.auftragsChips.rundum).toEqual([false, false, false, false, false, false])
+    expect(sheet.auftragsChips.sieben).toEqual([])
   })
 
   it('legt je Feld einen Wert an und nichts ist freigespielt', () => {
@@ -137,9 +140,9 @@ describe('auftragPoints', () => {
     expect(auftragPoints(sheet, 'wasser')).toBe(11)
   })
 
-  it('nimmt bei Rundumauftraegen den eingetippten Wert unveraendert', () => {
+  it('hakt bei Rundumauftraegen dieselben Karten ab wie bei den Gebieten', () => {
     const sheet = createEmptySheet()
-    sheet.auftraege.rundum = 6
+    sheet.auftragsChips.rundum = [false, false, false, false, true, false] // 6
     expect(auftragPoints(sheet, 'rundum')).toBe(6)
   })
 
@@ -175,7 +178,7 @@ describe('computeTotals', () => {
     sheet.auftragsChips.dorf = [true, true, false, true, true, true] // 4+4+5+6+6 = 25
     sheet.auftragsChips.weg = [true, true, true, false, true, false] // 19
     sheet.auftragsChips.wasser = [false, false, true, false, true, false] // 11
-    sheet.auftraege.rundum = 6
+    sheet.auftragsChips.rundum = [false, false, false, false, true, false] // 6
     sheet.auftraege.sieben = 1 // Doppelauftrag = 7 Punkte
     sheet.bonus.kirschbluete = 3
     sheet.bonus.reisfeld = 2

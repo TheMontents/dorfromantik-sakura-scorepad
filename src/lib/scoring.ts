@@ -18,7 +18,7 @@ export type CategoryKey =
   | 'rundum'
   | 'sieben'
 
-/** Auftragskarten einer Gebietskategorie: je zweimal 4, 5 und 6 Punkte. */
+/** Auftragskarten eines Auftragstyps: je zweimal 4, 5 und 6 Punkte. */
 export const AUFTRAGS_WERTE = [4, 4, 5, 5, 6, 6]
 
 export interface Category {
@@ -81,7 +81,7 @@ export const CATEGORIES: Category[] = [
   {
     key: 'rundum',
     label: 'Rundumaufträge',
-    auftragsWerte: null,
+    auftragsWerte: AUFTRAGS_WERTE,
     bonusLabel: 'längste = +2',
     bonusHint: '+2 je Rundumauftrag an der längsten Straße / am längsten Fluss',
   },

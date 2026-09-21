@@ -17,13 +17,13 @@ zweiten Zeile:
 | Rundumaufträge | +2 je Rundumauftrag an längster Straße / längstem Fluss |
 | 7 | schraffiert, keine Eingabe |
 
-Die fünf Gebietsspalten (Kirschblüten, Reisfelder, Dorf, Wege, Wasser) haben eine
-feste Auftragsmenge: laut Anleitung zeigen die Auftragsmarker „je Typ je 2× die
-Werte 4, 5 und 6", zusammen 30. Sie werden als sechs Chips angetippt statt
-eingetippt – damit sind genau die erreichbaren Summen möglich und eine volle
-Spalte kostet sechs Taps. In der 7er-Spalte wird die Anzahl erfüllter
-Doppelaufträge eingetippt (× 7 Punkte), bei den Rundumaufträgen die Punktzahl
-direkt, weil deren Werte erst mit dem Erfolg ins Spiel kommen. Die zweite Zeile
+Sechs der sieben Spalten haben eine feste Auftragsmenge: die Auftragsmarker
+zeigen „je Typ je 2× die Werte 4, 5 und 6", zusammen 30 – das gilt für
+Kirschblüten, Reisfelder, Dorf, Wege, Wasser und ebenso für die Rundumaufträge.
+Sie werden als sechs Chips angetippt statt eingetippt, damit sind genau die
+erreichbaren Summen möglich und eine volle Spalte kostet sechs Taps. Nur in der
+7er-Spalte wird die Anzahl erfüllter Doppelaufträge eingetippt (× 7 Punkte). Die
+zweite Zeile
 (Fahnen / längste / +2) wird frei eingetippt: Fahnen zählen die Plättchen des
 Fahnengebiets, aber nur wenn es abgeschlossen ist, längste Straße und längster
 Fluss die Plättchen der jeweils längsten Verbindung.
