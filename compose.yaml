@@ -1,7 +1,9 @@
+# Local container test only. The deployment on the NAS does NOT use this file:
+# it pulls a pinned image from GHCR through the homelab repo, see README.
 services:
   dorfromantik-sakura-scorepad:
     build: .
-    image: dorfromantik-sakura-scorepad:latest
+    image: dorfromantik-sakura-scorepad:dev
     container_name: dorfromantik-sakura-scorepad
     ports:
       - "30028:80"

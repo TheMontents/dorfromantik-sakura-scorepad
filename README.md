@@ -81,20 +81,29 @@ plain data there – when a rule changes, one place needs an edit.
 
 ## Deployment
 
+Pushing a version tag builds the image and pushes it to GHCR:
+
 ```bash
-docker compose up -d --build
+npm version patch          # or minor / major – updates package.json
+git push --follow-tags
 ```
 
-Reachable at `http://192.168.178.55:30028` afterwards.
+`.github/workflows/publish.yml` then publishes
+`ghcr.io/themontents/dorfromantik-sakura-scorepad` with the exact version and
+the `major.minor` tag. There is deliberately no `latest`: the stack that runs
+this image pins an exact tag, so that the running version is always readable
+from the compose file and Dependabot can bump it.
 
-For external access through the `marzl-home` Cloudflare tunnel, add a public
-hostname route:
+The server side lives in the [homelab](https://github.com/TheMontents/homelab)
+repository as the `dorfromantik` stack: bump the image tag there, commit, and
+deploy on the NAS with
 
-| Field | Value |
-| --- | --- |
-| Subdomain | `dorfromantik` |
-| Domain | `marzl.uk` |
-| Service | `http://192.168.178.55:30028` |
+```bash
+sudo /mnt/ssd/apps/stacks-repo/stacks/_bin/deploy.sh dorfromantik
+```
+
+`compose.yaml` in this repository builds the image locally and is meant for
+testing the container before publishing, not for the deployment.
 
 The service worker refreshes itself via `registerType: 'autoUpdate'`; nginx
 deliberately serves `sw.js` and `manifest.webmanifest` without caching so a new
