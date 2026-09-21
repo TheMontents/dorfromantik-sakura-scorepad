@@ -1,8 +1,8 @@
 services:
-  dorfromantik-sakura:
+  dorfromantik-sakura-scorepad:
     build: .
-    image: dorfromantik-sakura:latest
-    container_name: dorfromantik-sakura
+    image: dorfromantik-sakura-scorepad:latest
+    container_name: dorfromantik-sakura-scorepad
     ports:
       - "30028:80"
     restart: unless-stopped
