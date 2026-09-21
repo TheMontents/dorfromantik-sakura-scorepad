@@ -5,7 +5,7 @@ import CatIcon from './CatIcon.vue'
 import NumberField from './NumberField.vue'
 import { t } from '../lib/i18n'
 import type { Game } from '../lib/games'
-import type { Sheet, Totals } from '../lib/scoring'
+import { visibleMarkers, type Sheet, type Totals } from '../lib/scoring'
 
 const props = defineProps<{ game: Game; sheet: Sheet; totals: Totals }>()
 
@@ -43,7 +43,7 @@ const text = computed(() => t.value.games[props.game.id])
             <TaskCards
               v-if="category.taskValues"
               v-model="sheet.taskCards[category.key]"
-              :values="category.taskValues"
+              :markers="visibleMarkers(game, sheet, category)"
               :category="text.categories[category.key].label"
             />
             <div v-else class="typed">

@@ -5,7 +5,7 @@
  * Every function here takes the game it should score, so nothing in this file
  * knows about cherry blossoms or railways.
  */
-import type { Game, Unlock } from './games'
+import type { Category, Game, Unlock } from './games'
 
 export interface UnlockState {
   /** Entry is unlocked and counts towards the result */
@@ -15,14 +15,50 @@ export interface UnlockState {
 }
 
 export interface Sheet {
-  /** Ticked task markers per category – only where a fixed set exists */
+  /** Ticked task markers per category, indexed by the canonical marker list */
   taskCards: Record<string, boolean[]>
   /** Task points entered directly – only for categories without a set */
   tasks: Record<string, number>
   bonus: Record<string, number>
   unlocks: Record<string, UnlockState>
-  /** Classic only: the mini expansion entries are in play */
-  expansions: boolean
+  /** Campaign material that is in play, by option id */
+  options: Record<string, boolean>
+}
+
+export interface Marker {
+  value: number
+  /** Present while the marker still has to be unlocked */
+  option?: string
+}
+
+/**
+ * All markers a column can ever hold, in a stable order: the ones from the
+ * base box first, then what the campaign adds, sorted by value.
+ *
+ * The order has to stay stable regardless of which options are on, because
+ * `taskCards` indexes into it – otherwise switching an option mid-game would
+ * move the ticks to other markers.
+ */
+export function markers(game: Game, category: Category): Marker[] {
+  if (!category.taskValues) return []
+  const list: Marker[] = category.taskValues.map((value) => ({ value }))
+  for (const option of game.options) {
+    if (option.addsTaskValue === undefined) continue
+    if (option.onlyTagged && !category.tags?.includes(option.onlyTagged)) continue
+    list.push({ value: option.addsTaskValue, option: option.id })
+  }
+  return list.sort((a, b) => a.value - b.value)
+}
+
+/** Markers currently on the table, with their index in the canonical list. */
+export function visibleMarkers(
+  game: Game,
+  sheet: Sheet,
+  category: Category,
+): { marker: Marker; index: number }[] {
+  return markers(game, category)
+    .map((marker, index) => ({ marker, index }))
+    .filter(({ marker }) => !marker.option || sheet.options[marker.option] === true)
 }
 
 export function createEmptySheet(game: Game): Sheet {
@@ -30,7 +66,7 @@ export function createEmptySheet(game: Game): Sheet {
   const tasks: Record<string, number> = {}
   const bonus: Record<string, number> = {}
   for (const category of game.categories) {
-    taskCards[category.key] = (category.taskValues ?? []).map(() => false)
+    taskCards[category.key] = markers(game, category).map(() => false)
     tasks[category.key] = 0
     bonus[category.key] = 0
   }
@@ -38,12 +74,17 @@ export function createEmptySheet(game: Game): Sheet {
   for (const unlock of game.unlocks) {
     unlocks[unlock.id] = { enabled: false, values: unlock.fields.map(() => 0) }
   }
-  return { taskCards, tasks, bonus, unlocks, expansions: false }
+  const options: Record<string, boolean> = {}
+  for (const option of game.options) options[option.id] = false
+  return { taskCards, tasks, bonus, unlocks, options }
 }
 
-/** The entries in play: the mini expansions only once they are switched on. */
+/** The entries in play: those behind an option only once it is switched on. */
 export function activeUnlocks(game: Game, sheet: Sheet): Unlock[] {
-  return game.unlocks.filter((unlock) => !unlock.expansion || sheet.expansions)
+  const showsExpansions = game.options.some(
+    (option) => option.showsExpansions && sheet.options[option.id] === true,
+  )
+  return game.unlocks.filter((unlock) => !unlock.expansion || showsExpansions)
 }
 
 /** Points of a single unlocked entry (0 while it is not unlocked). */
@@ -61,10 +102,13 @@ export function unlockPoints(unlock: Unlock, state: UnlockState | undefined): nu
  */
 export function taskPoints(game: Game, sheet: Sheet, key: string): number {
   const category = game.categories.find((c) => c.key === key)
-  const values = category?.taskValues
-  if (!values) return (sheet.tasks[key] ?? 0) * (category?.taskFactor ?? 1)
+  if (!category) return 0
+  if (!category.taskValues) return (sheet.tasks[key] ?? 0) * (category.taskFactor ?? 1)
   const cards = sheet.taskCards[key] ?? []
-  return values.reduce((sum, value, index) => sum + (cards[index] ? value : 0), 0)
+  return visibleMarkers(game, sheet, category).reduce(
+    (sum, { marker, index }) => sum + (cards[index] ? marker.value : 0),
+    0,
+  )
 }
 
 /** Column total of a category: tasks + bonus. */

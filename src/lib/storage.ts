@@ -1,5 +1,5 @@
 import type { Game, GameId } from './games'
-import { createEmptySheet, type Sheet } from './scoring'
+import { createEmptySheet, markers, type Sheet } from './scoring'
 
 /** One stored sheet per game, so both can be in progress at the same time. */
 const sheetKey = (game: GameId) => `dorfromantik:sheet:${game}:v4`
@@ -37,10 +37,12 @@ export function loadSheet(game: Game): Sheet {
 
   try {
     const stored = JSON.parse(raw) as Partial<Sheet>
-    sheet.expansions = stored.expansions === true
+    for (const option of game.options) {
+      sheet.options[option.id] = stored.options?.[option.id] === true
+    }
     for (const category of game.categories) {
       const cards = stored.taskCards?.[category.key]
-      sheet.taskCards[category.key] = (category.taskValues ?? []).map(
+      sheet.taskCards[category.key] = markers(game, category).map(
         (_, index) => cards?.[index] === true,
       )
       sheet.tasks[category.key] = toNumber(stored.tasks?.[category.key])

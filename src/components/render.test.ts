@@ -15,7 +15,7 @@ import { MESSAGES } from '../lib/messages'
 const render = (component: unknown, gameId: (typeof GAME_IDS)[number], expansions = false) => {
   const game = GAMES[gameId]
   const sheet = createEmptySheet(game)
-  sheet.expansions = expansions
+  sheet.options.miniExpansions = expansions
   const app = createSSRApp(component as never, {
     game,
     sheet,

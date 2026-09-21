@@ -44,6 +44,8 @@ export interface GameText {
   title: string
   categories: Record<string, CategoryText>
   unlocks: Record<string, UnlockText>
+  /** Labels of the campaign options, by option id */
+  options: Record<string, string>
 }
 
 export interface Messages {
@@ -70,7 +72,7 @@ export interface Messages {
     cancel: string
     clear: string
     game: string
-    expansions: string
+    campaignMaterial: string
     disclaimer: string
   }
   games: Record<GameId, GameText>
@@ -99,7 +101,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Abbrechen',
       clear: 'Leeren',
       game: 'Spiel',
-      expansions: 'Mini-Erweiterungen',
+      campaignMaterial: 'Kampagnenmaterial',
       disclaimer: 'Inoffizielles Fan-Projekt, nicht mit Pegasus Spiele verbunden. Dorfromantik ist eine Marke von Pegasus Spiele.',
     },
     games: {
@@ -250,6 +252,11 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Dorfplättchen'],
           },
         },
+        options: {
+          secondFour: '2. 4er-Auftrag je Farbe (Schachtel 1)',
+          tunnels: 'Tunnel: 7er-Aufträge für Wald, Getreide, Dorf (Schachtel 3)',
+          miniExpansions: 'Mini-Erweiterungen',
+        },
       },
       sakura: {
         name: 'Sakura',
@@ -361,6 +368,7 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Wiesenkanten'],
           },
         },
+        options: {},
       },
     },
   },
@@ -387,7 +395,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Cancel',
       clear: 'Clear',
       game: 'Game',
-      expansions: 'Mini expansions',
+      campaignMaterial: 'Campaign material',
       disclaimer: 'Unofficial fan project, not affiliated with Pegasus Spiele. Dorfromantik is a trademark of Pegasus Spiele.',
     },
     games: {
@@ -538,6 +546,11 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Village tiles'],
           },
         },
+        options: {
+          secondFour: 'Second 4 Task per colour (box 1)',
+          tunnels: 'Tunnels: 7 Tasks for Forest, Grain, Village (box 3)',
+          miniExpansions: 'Mini expansions',
+        },
       },
       sakura: {
         name: 'Sakura',
@@ -649,6 +662,7 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Meadow edges'],
           },
         },
+        options: {},
       },
     },
   },
@@ -675,7 +689,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Annuler',
       clear: 'Vider',
       game: 'Jeu',
-      expansions: 'Mini-extensions',
+      campaignMaterial: 'Matériel de campagne',
       disclaimer: 'Projet de fan non officiel, sans lien avec Pegasus Spiele. Dorfromantik est une marque de Pegasus Spiele.',
     },
     games: {
@@ -826,6 +840,11 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Tuiles village'],
           },
         },
+        options: {
+          secondFour: '2e mission à 4 par couleur (boîte 1)',
+          tunnels: 'Tunnels : missions à 7 pour Forêt, Céréales, Village (boîte 3)',
+          miniExpansions: 'Mini-extensions',
+        },
       },
       sakura: {
         name: 'Sakura',
@@ -937,6 +956,7 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Bords de prairie'],
           },
         },
+        options: {},
       },
     },
   },
@@ -963,7 +983,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Annulla',
       clear: 'Svuota',
       game: 'Gioco',
-      expansions: 'Mini espansioni',
+      campaignMaterial: 'Materiale della campagna',
       disclaimer: 'Progetto amatoriale non ufficiale, non affiliato a Pegasus Spiele. Dorfromantik è un marchio di Pegasus Spiele.',
     },
     games: {
@@ -1114,6 +1134,11 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Tessere villaggio'],
           },
         },
+        options: {
+          secondFour: '2° incarico da 4 per colore (scatola 1)',
+          tunnels: 'Tunnel: incarichi da 7 per Bosco, Grano, Villaggio (scatola 3)',
+          miniExpansions: 'Mini espansioni',
+        },
       },
       sakura: {
         name: 'Sakura',
@@ -1225,6 +1250,7 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Bordi di prato'],
           },
         },
+        options: {},
       },
     },
   },
@@ -1251,7 +1277,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Cancelar',
       clear: 'Vaciar',
       game: 'Juego',
-      expansions: 'Miniexpansiones',
+      campaignMaterial: 'Material de campaña',
       disclaimer: 'Proyecto de fans no oficial, sin vinculación con Pegasus Spiele. Dorfromantik es una marca de Pegasus Spiele.',
     },
     games: {
@@ -1402,6 +1428,11 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Losetas de pueblo'],
           },
         },
+        options: {
+          secondFour: '2.ª misión de 4 por color (caja 1)',
+          tunnels: 'Túneles: misiones de 7 para Bosque, Cereal, Pueblo (caja 3)',
+          miniExpansions: 'Miniexpansiones',
+        },
       },
       sakura: {
         name: 'Sakura',
@@ -1513,6 +1544,7 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Bordes de pradera'],
           },
         },
+        options: {},
       },
     },
   },
@@ -1539,7 +1571,7 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Anuluj',
       clear: 'Wyczyść',
       game: 'Gra',
-      expansions: 'Mini dodatki',
+      campaignMaterial: 'Materiał kampanii',
       disclaimer: 'Nieoficjalny projekt fanowski, niezwiązany z Pegasus Spiele. Dorfromantik jest znakiem towarowym Pegasus Spiele.',
     },
     games: {
@@ -1690,6 +1722,11 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Płytki wioski'],
           },
         },
+        options: {
+          secondFour: 'Drugie zlecenie za 4 na kolor (pudełko 1)',
+          tunnels: 'Tunele: zlecenia za 7 dla Lasu, Zboża, Wioski (pudełko 3)',
+          miniExpansions: 'Mini dodatki',
+        },
       },
       sakura: {
         name: 'Sakura',
@@ -1801,6 +1838,7 @@ export const MESSAGES: Record<Locale, Messages> = {
             fields: ['Krawędzie łąki'],
           },
         },
+        options: {},
       },
     },
   },

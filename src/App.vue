@@ -34,12 +34,12 @@ const askReset = ref(false)
 
 const resetSheet = () => {
   askReset.value = false
-  const keepExpansions = sheet.value.expansions
+  const keepOptions = { ...sheet.value.options }
   clearSheet(gameId.value)
   sheet.value = createEmptySheet(game.value)
   // Welches Material freigespielt ist, gehört zur Kampagne und nicht zur
   // einzelnen Partie – das überlebt einen neuen Bogen.
-  sheet.value.expansions = keepExpansions
+  sheet.value.options = keepOptions
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -83,10 +83,13 @@ const startNewGame = () => {
       <ScoreTable :game="game" :sheet="sheet" :totals="totals" />
       <UnlockList :game="game" :sheet="sheet" :totals="totals" />
 
-      <label v-if="game.hasExpansions" class="expansions">
-        <input v-model="sheet.expansions" type="checkbox" />
-        <span>{{ t.ui.expansions }}</span>
-      </label>
+      <section v-if="game.options.length" class="options">
+        <h2>{{ t.ui.campaignMaterial }}</h2>
+        <label v-for="option in game.options" :key="option.id">
+          <input v-model="sheet.options[option.id]" type="checkbox" />
+          <span>{{ text.options[option.id] }}</span>
+        </label>
+      </section>
 
       <section class="panel summary">
         <h2 class="sr-only">{{ t.ui.subtotals }}</h2>
@@ -209,20 +212,34 @@ main {
   gap: 0.85rem;
 }
 
-.expansions {
+.options {
+  padding: 0 0.35rem;
+  color: #fff;
+}
+
+.options h2 {
+  margin: 0 0 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.options label {
   display: flex;
   align-items: center;
   gap: 0.55rem;
-  padding: 0 0.35rem;
-  color: #fff;
+  padding: 0.18rem 0;
   font-size: 0.85rem;
   font-weight: 600;
   cursor: pointer;
 }
 
-.expansions input {
+.options input {
   width: 1.15rem;
   height: 1.15rem;
+  flex: none;
   accent-color: #fff;
   cursor: pointer;
 }

@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { fill, t } from '../lib/i18n'
 
-const props = defineProps<{
-  /** Values of the task markers, e.g. [4, 4, 5, 5, 6, 6] */
-  values: number[]
+defineProps<{
+  /** Markers on the table, with their index in the canonical list */
+  markers: { marker: { value: number }; index: number }[]
   /** Category name – for screen readers only */
   category: string
 }>()
@@ -11,7 +11,7 @@ const props = defineProps<{
 const model = defineModel<boolean[]>({ required: true })
 
 const toggle = (index: number) => {
-  const next = props.values.map((_, i) => model.value[i] === true)
+  const next = [...model.value]
   next[index] = !next[index]
   model.value = next
 }
@@ -20,16 +20,16 @@ const toggle = (index: number) => {
 <template>
   <div class="chips" role="group" :aria-label="fill(t.ui.taskGroup, { category: category })">
     <button
-      v-for="(value, index) in values"
+      v-for="{ marker, index } in markers"
       :key="index"
       type="button"
       class="chip"
       :class="{ on: model[index] }"
       :aria-pressed="model[index] === true"
-      :aria-label="fill(t.ui.taskCard, { points: value })"
+      :aria-label="fill(t.ui.taskCard, { points: marker.value })"
       @click="toggle(index)"
     >
-      {{ value }}
+      {{ marker.value }}
     </button>
   </div>
 </template>
@@ -37,7 +37,7 @@ const toggle = (index: number) => {
 <style scoped>
 .chips {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
   gap: 0.35rem;
 }
 

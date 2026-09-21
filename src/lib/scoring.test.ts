@@ -9,6 +9,8 @@ import {
 } from './games'
 import {
   activeUnlocks,
+  markers,
+  visibleMarkers,
   categoryTotal,
   computeTotals,
   createEmptySheet,
@@ -91,12 +93,15 @@ describe('createEmptySheet', () => {
 
   it('creates one unticked marker per task value', () => {
     const sheet = createEmptySheet(classic)
-    expect(sheet.taskCards.forest).toEqual([false, false, false, false, false])
+    // Wald kann spaeter 7 Marker haben: 4,4,5,5,6,6,7
+    expect(sheet.taskCards.forest).toHaveLength(7)
+    expect(sheet.taskCards.rail).toHaveLength(6)
     expect(createEmptySheet(sakura).taskCards.seven).toEqual([])
   })
 
-  it('starts with the mini expansions switched off', () => {
-    expect(createEmptySheet(classic).expansions).toBe(false)
+  it('starts with every campaign option switched off', () => {
+    const sheet = createEmptySheet(classic)
+    expect(Object.values(sheet.options)).toEqual([false, false, false])
   })
 })
 
@@ -104,13 +109,13 @@ describe('activeUnlocks', () => {
   it('hides the mini expansions until they are switched on', () => {
     const sheet = createEmptySheet(classic)
     expect(activeUnlocks(classic, sheet)).toHaveLength(15)
-    sheet.expansions = true
+    sheet.options.miniExpansions = true
     expect(activeUnlocks(classic, sheet)).toHaveLength(23)
   })
 
   it('leaves a game without expansions untouched', () => {
     const sheet = createEmptySheet(sakura)
-    sheet.expansions = true
+    sheet.options.miniExpansions = true
     expect(activeUnlocks(sakura, sheet)).toHaveLength(14)
   })
 })
@@ -154,15 +159,17 @@ describe('unlockPoints', () => {
 describe('taskPoints', () => {
   it('sums the ticked markers only', () => {
     const sheet = createEmptySheet(classic)
-    // 4 + 5 + 6 = 15
-    sheet.taskCards.forest = [true, true, false, true, false]
+    // Kanonisch 4,4,5,5,6,6,7 – ohne Option zaehlen nur 4,5,5,6,6
+    sheet.taskCards.forest = [true, false, true, false, true, false, false]
     expect(taskPoints(classic, sheet, 'forest')).toBe(15)
   })
 
   it('yields the full column when every marker is ticked', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.rail = [true, true, true, true, true]
+    sheet.taskCards.rail = [true, true, true, true, true, true]
     expect(taskPoints(classic, sheet, 'rail')).toBe(26)
+    sheet.options.secondFour = true
+    expect(taskPoints(classic, sheet, 'rail')).toBe(30)
   })
 
   it('multiplies the amount by 7 in the Sakura "7" column', () => {
@@ -174,7 +181,7 @@ describe('taskPoints', () => {
   it('ignores a typed value in columns that use markers', () => {
     const sheet = createEmptySheet(classic)
     sheet.tasks.river = 99
-    sheet.taskCards.river = [false, true, false, true, false]
+    sheet.taskCards.river = [false, false, true, false, true, false] // 5 + 6
     expect(taskPoints(classic, sheet, 'river')).toBe(11)
   })
 })
@@ -182,7 +189,7 @@ describe('taskPoints', () => {
 describe('categoryTotal', () => {
   it('adds the task row and the bonus row', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.village = [true, false, false, true, false] // 4 + 6 = 10
+    sheet.taskCards.village = [true, false, false, false, true, false, false] // 4 + 6 = 10
     sheet.bonus.village = 5
     expect(categoryTotal(classic, sheet, 'village')).toBe(15)
   })
@@ -198,11 +205,11 @@ describe('categoryTotal', () => {
 describe('computeTotals', () => {
   it('sums the classic sheet row by row', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.forest = [true, true, false, true, false] // 15
-    sheet.taskCards.grain = [false, true, true, false, false] // 10
-    sheet.taskCards.village = [true, false, false, false, false] // 4
-    sheet.taskCards.rail = [true, true, true, true, true] // 26
-    sheet.taskCards.river = [false, false, false, true, true] // 12
+    sheet.taskCards.forest = [true, false, true, false, true, false, false] // 4+5+6 = 15
+    sheet.taskCards.grain = [false, false, true, true, false, false, false] // 5+5 = 10
+    sheet.taskCards.village = [true, false, false, false, false, false, false] // 4
+    sheet.taskCards.rail = [true, true, true, true, true, true] // 26
+    sheet.taskCards.river = [false, false, false, false, true, true] // 12
     sheet.bonus.forest = 7
     sheet.bonus.grain = 3
     sheet.bonus.village = 4
@@ -221,7 +228,7 @@ describe('computeTotals', () => {
     const sheet = createEmptySheet(classic)
     sheet.unlocks.school = { enabled: true, values: [8] }
     expect(computeTotals(classic, sheet).result).toBe(0)
-    sheet.expansions = true
+    sheet.options.miniExpansions = true
     expect(computeTotals(classic, sheet).result).toBe(8)
   })
 
@@ -229,5 +236,46 @@ describe('computeTotals', () => {
     const sheet = createEmptySheet(sakura)
     sheet.unlocks.poet = { enabled: true, values: [0] }
     expect(computeTotals(sakura, sheet).result).toBe(0)
+  })
+})
+
+describe('campaign markers', () => {
+  it('keeps the canonical order stable so ticks do not move', () => {
+    const forest = classic.categories[0]
+    expect(markers(classic, forest).map((m) => m.value)).toEqual([4, 4, 5, 5, 6, 6, 7])
+    expect(markers(classic, classic.categories[3]).map((m) => m.value)).toEqual([4, 4, 5, 5, 6, 6])
+  })
+
+  it('shows the extra markers only once their box is unlocked', () => {
+    const sheet = createEmptySheet(classic)
+    const forest = classic.categories[0]
+    expect(visibleMarkers(classic, sheet, forest).map((v) => v.marker.value)).toEqual([4, 5, 5, 6, 6])
+    sheet.options.secondFour = true
+    expect(visibleMarkers(classic, sheet, forest).map((v) => v.marker.value)).toEqual([4, 4, 5, 5, 6, 6])
+    sheet.options.tunnels = true
+    expect(visibleMarkers(classic, sheet, forest).map((v) => v.marker.value)).toEqual([4, 4, 5, 5, 6, 6, 7])
+  })
+
+  it('gives the 7 to forest, grain and village only', () => {
+    const withSeven = classic.categories.filter((c) =>
+      markers(classic, c).some((m) => m.value === 7),
+    )
+    expect(withSeven.map((c) => c.key)).toEqual(['forest', 'grain', 'village'])
+  })
+
+  it('leaves a tick in place when an option is switched on', () => {
+    const sheet = createEmptySheet(classic)
+    sheet.taskCards.forest[6] = true // der 7er
+    expect(taskPoints(classic, sheet, 'forest')).toBe(0)
+    sheet.options.tunnels = true
+    expect(taskPoints(classic, sheet, 'forest')).toBe(7)
+  })
+
+  it('adds up to 37 points for a fully unlocked tunnel column', () => {
+    const sheet = createEmptySheet(classic)
+    sheet.options.secondFour = true
+    sheet.options.tunnels = true
+    sheet.taskCards.grain = sheet.taskCards.grain.map(() => true)
+    expect(taskPoints(classic, sheet, 'grain')).toBe(37)
   })
 })

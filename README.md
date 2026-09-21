@@ -15,16 +15,25 @@ game in progress survives a look at the other pad.
 | | Classic | Sakura |
 | --- | --- | --- |
 | Task columns | Forest, Grain, Village, Track, Stream | Cherry trees, Rice fields, Villages, Roads, Rivers, Wraparound Tasks, "7" |
-| Task markers per type | 1×4, 2×5, 2×6 = 26 points | 2×4, 2×5, 2×6 = 30 points |
+| Task markers per type | 1×4, 2×5, 2×6 = 26 points, growing with the campaign | 2×4, 2×5, 2×6 = 30 points |
 | Flags | green, yellow, red | pink, green, red |
 | Longest | Track and Stream | Road and River |
-| Unlocked entries | 15, plus 8 from the mini expansions behind a switch | 14 |
+| Unlocked entries | 15, plus 8 from the mini expansions | 14 |
+| Campaign switches | second 4, tunnels, mini expansions | – |
 | Colours | meadow green | cherry blossom pink |
 
 **Task row** – the markers of a column are tapped rather than typed, so only
 reachable sums are possible and a full column takes five or six taps. The one
 exception is the Sakura "7" column, which takes the number of completed double
 tasks (× 7 points).
+
+The classic campaign hands out more markers as it goes: box 1 adds a second 4 to
+every colour (30 points per column), box 3 adds a 7 to forest, grain and village
+along with the three tunnel achievements (37 points per column). Both sit behind
+a switch under *Campaign material*, together with the mini expansions, and the
+switches survive a new sheet – what you unlocked belongs to the campaign, not to
+a single game. Ticks stay where they are when a switch is flipped, because the
+markers keep a canonical order behind the scenes.
 
 **Bonus row** – typed in. Flags count the tiles of the flag territory, but only
 if it is complete; longest Track/Road and longest Stream/River count the tiles

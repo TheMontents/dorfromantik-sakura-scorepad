@@ -14,6 +14,8 @@ export interface Category {
   key: string
   /** Glyph drawn by CatIcon */
   icon: string
+  /** Tags an option can single this category out by */
+  tags?: string[]
   /**
    * Values of this category's task markers, ticked off one by one.
    * `null` = no fixed set of markers.
@@ -45,12 +47,25 @@ export interface Unlock {
   expansion?: boolean
 }
 
+/**
+ * Material the campaign unlocks later. Each option is a switch of its own,
+ * because between the boxes that hold them lie a good few games.
+ */
+export interface GameOption {
+  id: string
+  /** Adds one task marker of this value to every affected column */
+  addsTaskValue?: number
+  /** Restricts the option to categories carrying this tag */
+  onlyTagged?: string
+  /** Shows the entries marked `expansion` */
+  showsExpansions?: boolean
+}
+
 export interface Game {
   id: GameId
   categories: Category[]
   unlocks: Unlock[]
-  /** Offers the mini expansion entries behind a switch */
-  hasExpansions: boolean
+  options: GameOption[]
 }
 
 /** Classic: 25 task markers, per type the values 1x4, 2x5 and 2x6 (26 points). */
@@ -61,11 +76,17 @@ export const SAKURA_TASK_VALUES = [4, 4, 5, 5, 6, 6]
 
 const classic: Game = {
   id: 'classic',
-  hasExpansions: true,
+  // Box 1 adds a second 4 to every type (30 points per column), box 3 adds a
+  // 7 to forest, grain and village along with the three tunnel achievements.
+  options: [
+    { id: 'secondFour', addsTaskValue: 4 },
+    { id: 'tunnels', addsTaskValue: 7, onlyTagged: 'tunnel' },
+    { id: 'miniExpansions', showsExpansions: true },
+  ],
   categories: [
-    { key: 'forest', icon: 'c-forest', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
-    { key: 'grain', icon: 'c-grain', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
-    { key: 'village', icon: 'c-village', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
+    { key: 'forest', icon: 'c-forest', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, tags: ['tunnel'] },
+    { key: 'grain', icon: 'c-grain', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, tags: ['tunnel'] },
+    { key: 'village', icon: 'c-village', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, tags: ['tunnel'] },
     { key: 'rail', icon: 'c-rail', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
     { key: 'river', icon: 'c-river', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
   ],
@@ -101,7 +122,7 @@ const classic: Game = {
 
 const sakura: Game = {
   id: 'sakura',
-  hasExpansions: false,
+  options: [],
   categories: [
     { key: 'cherry', icon: 's-cherry', taskValues: SAKURA_TASK_VALUES, hasBonus: true },
     { key: 'rice', icon: 's-rice', taskValues: SAKURA_TASK_VALUES, hasBonus: true },
