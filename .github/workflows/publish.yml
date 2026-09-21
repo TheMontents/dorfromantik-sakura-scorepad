@@ -36,18 +36,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # 1.2.3 and 1.2 — no `latest`. The homelab stacks pin exact tags on
-      # purpose: a moving tag cannot be bumped by Dependabot and hides which
-      # version is actually running.
+      # 1.2.3, 1.2 and `latest`. The moving tag exists for convenience (`docker
+      # run` without a tag); deployments must not pin it, because Dependabot
+      # cannot bump a moving tag and it hides which version actually runs.
       - name: Derive tags
         id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE }}
-          # latest=false is not the default: on a semver tag metadata-action adds
-          # `latest` on its own, which is exactly the moving tag the stacks
-          # must not pin.
-          flavor: latest=false
+          # auto = `latest` for real releases, not for prereleases such as
+          # 0.2.0-rc1. Stated explicitly so the intent is visible.
+          flavor: latest=auto
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
