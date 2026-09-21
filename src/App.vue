@@ -21,11 +21,8 @@ const neuePartie = () => {
 <template>
   <div class="app">
     <header class="top">
-      <div class="top-text">
-        <p class="eyebrow">Dorfromantik · Das Duell</p>
-        <h1>Sakura Wertungsblock</h1>
-      </div>
-      <button type="button" class="reset" @click="neuePartie">Neue Partie</button>
+      <p class="eyebrow">Dorfromantik · Das Duell</p>
+      <h1>Sakura Wertungsblock</h1>
     </header>
 
     <main>
@@ -43,8 +40,11 @@ const neuePartie = () => {
     </main>
 
     <footer class="result">
-      <span class="result-label">Ergebnis</span>
-      <span class="result-value">{{ totals.ergebnis }}</span>
+      <button type="button" class="reset" @click="neuePartie">Neue Partie</button>
+      <div class="result-score">
+        <span class="result-label">Ergebnis</span>
+        <span class="result-value">{{ totals.ergebnis }}</span>
+      </div>
     </footer>
   </div>
 </template>
@@ -57,15 +57,7 @@ const neuePartie = () => {
 }
 
 .top {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
   padding: 1.1rem 0.35rem 0.9rem;
-}
-
-.top-text {
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 .eyebrow {
@@ -87,18 +79,20 @@ h1 {
 
 .reset {
   flex: none;
-  border: 1.5px solid rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.16);
-  color: #fff;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.92);
   font-weight: 600;
-  font-size: 0.82rem;
-  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.85rem;
   border-radius: 999px;
   cursor: pointer;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .reset:active {
-  background: rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.22);
 }
 
 main {
@@ -145,11 +139,17 @@ main {
   gap: 1rem;
   max-width: 34rem;
   margin: 0 auto;
-  padding: 0.7rem 1.1rem calc(0.7rem + env(safe-area-inset-bottom));
+  padding: 0.7rem 1rem calc(0.7rem + env(safe-area-inset-bottom));
   background: var(--sakura-800);
   color: #fff;
   border-radius: 1.1rem 1.1rem 0 0;
   box-shadow: 0 -8px 24px rgba(90, 30, 45, 0.25);
+}
+
+.result-score {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
 }
 
 .result-label {
