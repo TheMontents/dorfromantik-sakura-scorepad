@@ -89,10 +89,16 @@ describe('unlockPoints', () => {
   it('multipliziert mit dem Faktor des Bogens', () => {
     expect(unlockPoints(unlockById('bruecken'), { enabled: true, values: [3] })).toBe(15)
     expect(unlockPoints(unlockById('tore'), { enabled: true, values: [2] })).toBe(10)
-    expect(unlockPoints(unlockById('tempel'), { enabled: true, values: [2] })).toBe(12)
     expect(unlockPoints(unlockById('kartograph'), { enabled: true, values: [4] })).toBe(8)
     expect(unlockPoints(unlockById('poet'), { enabled: true, values: [5] })).toBe(15)
     expect(unlockPoints(unlockById('sumoringer'), { enabled: true, values: [7] })).toBe(7)
+  })
+
+  it('wertet den Tempel als Ja/Nein mit 6 Punkten', () => {
+    const tempel = unlockById('tempel')
+    expect(tempel.fields[0].jaNein).toBe(true)
+    expect(unlockPoints(tempel, { enabled: true, values: [0] })).toBe(0)
+    expect(unlockPoints(tempel, { enabled: true, values: [1] })).toBe(6)
   })
 
   it('addiert bei Heissen Quellen beide Regeln: abgeschlossen x3 und 3 je Rundumauftrag', () => {

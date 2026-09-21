@@ -35,7 +35,10 @@ export function loadSheet(): Sheet {
       const storedUnlock = stored.unlocks?.[unlock.id]
       sheet.unlocks[unlock.id] = {
         enabled: storedUnlock?.enabled === true,
-        values: unlock.fields.map((_, index) => toNumber(storedUnlock?.values?.[index])),
+        values: unlock.fields.map((field, index) => {
+          const value = toNumber(storedUnlock?.values?.[index])
+          return field.jaNein ? Math.min(1, value) : value
+        }),
       }
     }
   } catch {

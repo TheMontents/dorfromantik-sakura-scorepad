@@ -77,6 +77,10 @@ export interface UnlockField {
    * bereits die Punktzahl (Bogen gibt keinen Faktor vor).
    */
   factor: number | null
+  /**
+   * Ja/Nein statt Anzahl: der Wert ist nur 0 oder 1, Ja gibt `factor` Punkte.
+   */
+  jaNein?: boolean
 }
 
 export interface Unlock {
@@ -98,7 +102,7 @@ export const UNLOCKS: Unlock[] = [
     id: 'tempel',
     label: 'Tempel',
     hint: 'passend umschlossen = 6',
-    fields: [{ label: 'Umschlossene Tempel', factor: 6 }],
+    fields: [{ label: 'Passend umschlossen', factor: 6, jaNein: true }],
   },
   {
     id: 'heisseQuellen',
