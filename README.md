@@ -3,6 +3,9 @@
 A digital score pad for **Dorfromantik: Sakura**. Small Vue 3 web app, built for
 phones, no backend.
 
+> Unofficial fan project. Not affiliated with, endorsed by, or sponsored by
+> Pegasus Spiele. "Dorfromantik" is a trademark of Pegasus Spiele GmbH.
+
 ## What it does
 
 **Upper table** – the seven categories of the printed sheet (cherry trees, rice
@@ -96,3 +99,22 @@ hostname route:
 The service worker refreshes itself via `registerType: 'autoUpdate'`; nginx
 deliberately serves `sw.js` and `manifest.webmanifest` without caching so a new
 build reaches devices that already installed the app.
+
+Because this is a fan tool, the deployment asks search engines to stay away: a
+`noindex` meta tag, a `robots.txt` that disallows everything, and an
+`X-Robots-Tag` header from nginx. Anyone with the link can still use it.
+
+Once the app has been added to a phone's home screen it works offline, so the
+server only needs to be reachable for the first load and for updates – which
+makes hosting it at home perfectly practical.
+
+## Licence and attribution
+
+The source code is MIT licensed, see [LICENSE](LICENSE).
+
+The game itself is not. "Dorfromantik" and "Dorfromantik: Sakura" are trademarks
+of Pegasus Spiele GmbH; the rule wording reproduced in `src/lib/messages.ts`
+comes from the publisher's own score pad and rulebook (the German and English
+PDFs published at [pegasus.de](https://pegasus.de/Dorfromantik-Sakura/51243G))
+and remains their intellectual property. This project is a free, unofficial fan
+tool with no claim to being official.

@@ -56,6 +56,7 @@ export interface Messages {
     /** {category} = name of the category */
     taskGroup: string
     language: string
+    disclaimer: string
   }
   categories: Record<CategoryKey, CategoryText>
   unlocks: Record<string, UnlockText>
@@ -82,6 +83,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Auftrag über {points} Punkte',
       taskGroup: 'Aufträge {category}',
       language: 'Sprache',
+      disclaimer:
+        'Inoffizielles Fan-Projekt, nicht mit Pegasus Spiele verbunden. Dorfromantik ist eine Marke von Pegasus Spiele.',
     },
     categories: {
       cherry: {
@@ -170,6 +173,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Task worth {points} points',
       taskGroup: '{category} Tasks',
       language: 'Language',
+      disclaimer:
+        'Unofficial fan project, not affiliated with Pegasus Spiele. Dorfromantik is a trademark of Pegasus Spiele.',
     },
     categories: {
       cherry: {
@@ -254,6 +259,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Mission à {points} points',
       taskGroup: 'Missions {category}',
       language: 'Langue',
+      disclaimer:
+        'Projet de fan non officiel, sans lien avec Pegasus Spiele. Dorfromantik est une marque de Pegasus Spiele.',
     },
     categories: {
       cherry: {
@@ -362,6 +369,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Incarico da {points} punti',
       taskGroup: 'Incarichi {category}',
       language: 'Lingua',
+      disclaimer:
+        'Progetto amatoriale non ufficiale, non affiliato a Pegasus Spiele. Dorfromantik è un marchio di Pegasus Spiele.',
     },
     categories: {
       cherry: {
@@ -466,6 +475,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Misión de {points} puntos',
       taskGroup: 'Misiones {category}',
       language: 'Idioma',
+      disclaimer:
+        'Proyecto de fans no oficial, sin vinculación con Pegasus Spiele. Dorfromantik es una marca de Pegasus Spiele.',
     },
     categories: {
       cherry: {
@@ -566,6 +577,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Zlecenie za {points} punktów',
       taskGroup: 'Zlecenia: {category}',
       language: 'Język',
+      disclaimer:
+        'Nieoficjalny projekt fanowski, niezwiązany z Pegasus Spiele. Dorfromantik jest znakiem towarowym Pegasus Spiele.',
     },
     categories: {
       cherry: {

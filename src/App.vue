@@ -46,6 +46,8 @@ const startNewGame = () => {
           <div><dt>{{ t.ui.unlocked }}</dt><dd>{{ totals.unlocked }}</dd></div>
         </dl>
       </section>
+
+      <p class="disclaimer">{{ t.ui.disclaimer }}</p>
     </main>
 
     <footer class="result">
@@ -164,6 +166,14 @@ main {
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: var(--ink);
+}
+
+.disclaimer {
+  margin: 0.2rem 0.35rem 0;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.78);
 }
 
 .result {
