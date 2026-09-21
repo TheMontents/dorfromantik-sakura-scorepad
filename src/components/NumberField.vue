@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { t } from '../lib/i18n'
 
 const props = withDefaults(
   defineProps<{
@@ -38,7 +39,7 @@ const bump = (delta: number) => {
         type="button"
         class="step"
         :disabled="model <= min"
-        :aria-label="`${label} verringern`"
+        :aria-label="`${label} ${t.ui.decrease}`"
         @click="bump(-1)"
       >
         −
@@ -53,7 +54,7 @@ const bump = (delta: number) => {
         :aria-label="label"
         @focus="($event.target as HTMLInputElement).select()"
       />
-      <button type="button" class="step" :aria-label="`${label} erhöhen`" @click="bump(1)">+</button>
+      <button type="button" class="step" :aria-label="`${label} ${t.ui.increase}`" @click="bump(1)">+</button>
     </div>
   </div>
 </template>

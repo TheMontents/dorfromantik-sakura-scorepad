@@ -30,7 +30,7 @@ describe('Bogen-Struktur', () => {
   })
 
   it('sperrt die Bonus-Zelle nur bei der 7er-Spalte', () => {
-    const ohneBonus = CATEGORIES.filter((c) => c.bonusLabel === null)
+    const ohneBonus = CATEGORIES.filter((c) => !c.hasBonus)
     expect(ohneBonus.map((c) => c.key)).toEqual(['sieben'])
   })
 

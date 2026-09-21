@@ -42,6 +42,25 @@ leert den Bogen. Eine Historie alter Partien gibt es bewusst nicht.
 Die App ist eine PWA: auf dem Handy zum Homescreen hinzufügen, danach läuft sie
 auch ohne Netz.
 
+## Sprachen
+
+Die App spricht die sechs Sprachen, in denen das Spiel erschienen ist: Deutsch,
+Englisch, Französisch, Italienisch, Spanisch und Polnisch. Beim ersten Aufruf
+wird die Sprache des Geräts übernommen (Fallback Englisch), oben rechts lässt
+sie sich umstellen, die Wahl wird gemerkt.
+
+**Deutsch und Englisch** verwenden die offizielle Terminologie der Pegasus-
+Wertungsblätter (`Aufträge`/`Tasks`, `Fahnen`/`Flags`, `Freigespielt`/`Unlocked`,
+`Rundumaufträge`/`Wraparound Tasks`). **Französisch, Italienisch, Spanisch und
+Polnisch** sind eigene Übersetzungen – inhaltlich korrekt, aber möglicherweise
+nicht wortgleich mit dem gedruckten Block des jeweiligen Verlags (Gigamic, Red
+Glove, IUVI Games). Korrekturen sind einzeilig in `src/lib/messages.ts`.
+
+Die Texte liegen vollständig in `src/lib/messages.ts`; `src/lib/scoring.ts`
+enthält nur noch Struktur und Faktoren. `src/lib/i18n.test.ts` prüft für jede
+Sprache, dass kein Text fehlt und keiner zu viel ist – eine neue Sprache
+hinzufügen heißt: Eintrag in `LOCALES`, Block in `MESSAGES`, Tests laufen lassen.
+
 ## Entwicklung
 
 ```bash

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { fill, t } from '../lib/i18n'
+
 const props = defineProps<{
   /** Werte der Auftragskarten, z.B. [4, 4, 5, 5, 6, 6] */
   werte: number[]
@@ -16,7 +18,7 @@ const toggle = (index: number) => {
 </script>
 
 <template>
-  <div class="chips" role="group" :aria-label="`Aufträge ${kategorie}`">
+  <div class="chips" role="group" :aria-label="fill(t.ui.taskGroup, { category: kategorie })">
     <button
       v-for="(wert, index) in werte"
       :key="index"
@@ -24,7 +26,7 @@ const toggle = (index: number) => {
       class="chip"
       :class="{ on: model[index] }"
       :aria-pressed="model[index] === true"
-      :aria-label="`Auftrag ${wert} Punkte`"
+      :aria-label="fill(t.ui.taskCard, { points: wert })"
       @click="toggle(index)"
     >
       {{ wert }}

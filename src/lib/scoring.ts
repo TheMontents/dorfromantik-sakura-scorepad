@@ -23,8 +23,6 @@ export const AUFTRAGS_WERTE = [4, 4, 5, 5, 6, 6]
 
 export interface Category {
   key: CategoryKey
-  /** Name der Kategorie, z.B. fuer Screenreader */
-  label: string
   /**
    * Werte der Auftragskarten dieser Kategorie, die einzeln abgehakt werden.
    * `null` = keine feste Kartenmenge.
@@ -36,72 +34,26 @@ export interface Category {
    * eingetippt.
    */
   auftragsFaktor?: number
-  /** Beschriftung der zweiten Zeile; null = schraffiert, keine Eingabe */
-  bonusLabel: string | null
-  /** Langtext der zweiten Zeile (Tooltip / Hilfezeile) */
-  bonusHint?: string
+  /** Hat eine zweite Zeile; ohne sie ist die Zelle schraffiert (nur die 7) */
+  hasBonus: boolean
 }
 
 export const CATEGORIES: Category[] = [
-  {
-    key: 'kirschbluete',
-    label: 'Kirschblüten',
-    auftragsWerte: AUFTRAGS_WERTE,
-    bonusLabel: 'Fahnen',
-    bonusHint: 'Rosa Fahne: Plättchen des Gebiets, aber nur wenn es abgeschlossen ist',
-  },
-  {
-    key: 'reisfeld',
-    label: 'Reisfelder',
-    auftragsWerte: AUFTRAGS_WERTE,
-    bonusLabel: 'Fahnen',
-    bonusHint: 'Grüne Fahne: Plättchen des Gebiets, aber nur wenn es abgeschlossen ist',
-  },
-  {
-    key: 'dorf',
-    label: 'Dorf',
-    auftragsWerte: AUFTRAGS_WERTE,
-    bonusLabel: 'Fahnen',
-    bonusHint: 'Rote Fahne: Plättchen des Gebiets, aber nur wenn es abgeschlossen ist',
-  },
-  {
-    key: 'weg',
-    label: 'Wege',
-    auftragsWerte: AUFTRAGS_WERTE,
-    bonusLabel: 'längste',
-    bonusHint: 'Anzahl Plättchen der längsten Straße',
-  },
-  {
-    key: 'wasser',
-    label: 'Wasser',
-    auftragsWerte: AUFTRAGS_WERTE,
-    bonusLabel: 'längste',
-    bonusHint: 'Anzahl Plättchen des längsten Flusses',
-  },
-  {
-    key: 'rundum',
-    label: 'Rundumaufträge',
-    auftragsWerte: AUFTRAGS_WERTE,
-    bonusLabel: 'längste = +2',
-    bonusHint: '+2 je Rundumauftrag an der längsten Straße / am längsten Fluss',
-  },
-  {
-    key: 'sieben',
-    label: '7',
-    auftragsWerte: null,
-    auftragsFaktor: 7,
-    bonusLabel: null,
-  },
+  { key: 'kirschbluete', auftragsWerte: AUFTRAGS_WERTE, hasBonus: true },
+  { key: 'reisfeld', auftragsWerte: AUFTRAGS_WERTE, hasBonus: true },
+  { key: 'dorf', auftragsWerte: AUFTRAGS_WERTE, hasBonus: true },
+  { key: 'weg', auftragsWerte: AUFTRAGS_WERTE, hasBonus: true },
+  { key: 'wasser', auftragsWerte: AUFTRAGS_WERTE, hasBonus: true },
+  { key: 'rundum', auftragsWerte: AUFTRAGS_WERTE, hasBonus: true },
+  { key: 'sieben', auftragsWerte: null, auftragsFaktor: 7, hasBonus: false },
 ]
 
 const byKey = (key: CategoryKey) => CATEGORIES.find((c) => c.key === key)
 
 /** Kategorien, die eine Bonus-Zelle besitzen (alle ausser "7"). */
-export const BONUS_CATEGORIES = CATEGORIES.filter((c) => c.bonusLabel !== null)
+export const BONUS_CATEGORIES = CATEGORIES.filter((c) => c.hasBonus)
 
 export interface UnlockField {
-  /** Beschriftung des Eingabefeldes */
-  label: string
   /**
    * Punkte pro eingetippter Einheit. Bei `null` ist der eingetippte Wert
    * bereits die Punktzahl (Bogen gibt keinen Faktor vor).
@@ -113,100 +65,24 @@ export interface UnlockField {
 
 export interface Unlock {
   id: string
-  label: string
-  /** Regeltext wie auf dem Bogen */
-  hint: string
   fields: UnlockField[]
 }
 
 export const UNLOCKS: Unlock[] = [
-  {
-    id: 'kirschbluetenGesammelt',
-    label: 'Kirschblüten',
-    hint: 'gesammelt',
-    fields: [{ label: 'Punkte', factor: null }],
-  },
-  {
-    id: 'tempel',
-    label: 'Tempel',
-    hint: 'passend umschlossen = 6',
-    fields: [{ label: 'Umschlossene Tempel', factor: 6, max: 3 }],
-  },
-  {
-    id: 'heisseQuellen',
-    label: 'Heiße Quellen',
-    hint: 'abgeschlossen = 3 · 3/Rundumauftrag',
-    fields: [
-      { label: 'Abgeschlossene Quellen', factor: 3 },
-      { label: 'Rundumaufträge', factor: 3 },
-    ],
-  },
-  {
-    id: 'bruecken',
-    label: 'Brücken',
-    hint: 'längster Fluss = 5/Brücke',
-    fields: [{ label: 'Brücken', factor: 5 }],
-  },
-  {
-    id: 'tore',
-    label: 'Tore',
-    hint: 'längste Straße = 5/Tor',
-    fields: [{ label: 'Tore', factor: 5 }],
-  },
-  {
-    id: 'einsiedler',
-    label: 'Einsiedler',
-    hint: '3/freier Kante',
-    fields: [{ label: 'Freie Kanten', factor: 3 }],
-  },
-  {
-    id: 'sternwarte',
-    label: 'Sternwarte',
-    hint: 'abgeschlossenes Fahnengebiet (FG) = 3/abgeschlossenes FG',
-    fields: [{ label: 'Abgeschlossene FG', factor: 3 }],
-  },
-  {
-    id: 'kartograph',
-    label: 'Kartograph',
-    hint: 'Blickrichtung = 2/Auftrag',
-    fields: [{ label: 'Aufträge', factor: 2 }],
-  },
-  {
-    id: 'sumoringer',
-    label: 'Sumoringer',
-    hint: '1/passender Kante',
-    fields: [{ label: 'Passende Kanten', factor: 1 }],
-  },
-  {
-    id: 'moossammlerin',
-    label: 'Moossammlerin',
-    hint: '1/passender Kante',
-    fields: [{ label: 'Passende Kanten', factor: 1 }],
-  },
-  {
-    id: 'reisbaeuerin',
-    label: 'Reisbäuerin',
-    hint: '1/passender Kante',
-    fields: [{ label: 'Passende Kanten', factor: 1 }],
-  },
-  {
-    id: 'schiffAnlegestelle',
-    label: 'Schiff-Anlegestelle',
-    hint: '1/Plättchen dazwischen',
-    fields: [{ label: 'Plättchen dazwischen', factor: 1 }],
-  },
-  {
-    id: 'ochsenkarren',
-    label: 'Ochsenkarren-Handelsposten',
-    hint: '1/Plättchen dazwischen',
-    fields: [{ label: 'Plättchen dazwischen', factor: 1 }],
-  },
-  {
-    id: 'poet',
-    label: 'Poet',
-    hint: '3/Wiesenkante',
-    fields: [{ label: 'Wiesenkanten', factor: 3 }],
-  },
+  { id: 'kirschbluetenGesammelt', fields: [{ factor: null }] },
+  { id: 'tempel', fields: [{ factor: 6, max: 3 }] },
+  { id: 'heisseQuellen', fields: [{ factor: 3 }, { factor: 3 }] },
+  { id: 'bruecken', fields: [{ factor: 5 }] },
+  { id: 'tore', fields: [{ factor: 5 }] },
+  { id: 'einsiedler', fields: [{ factor: 3 }] },
+  { id: 'sternwarte', fields: [{ factor: 3 }] },
+  { id: 'kartograph', fields: [{ factor: 2 }] },
+  { id: 'sumoringer', fields: [{ factor: 1 }] },
+  { id: 'moossammlerin', fields: [{ factor: 1 }] },
+  { id: 'reisbaeuerin', fields: [{ factor: 1 }] },
+  { id: 'schiffAnlegestelle', fields: [{ factor: 1 }] },
+  { id: 'ochsenkarren', fields: [{ factor: 1 }] },
+  { id: 'poet', fields: [{ factor: 3 }] },
 ]
 
 export interface UnlockState {
@@ -264,7 +140,7 @@ export function auftragPoints(sheet: Sheet, key: CategoryKey): number {
 
 /** Spaltensumme einer Kategorie: Auftrag + Bonus. */
 export function categoryTotal(sheet: Sheet, key: CategoryKey): number {
-  const bonus = byKey(key)?.bonusLabel === null ? 0 : (sheet.bonus[key] ?? 0)
+  const bonus = byKey(key)?.hasBonus ? (sheet.bonus[key] ?? 0) : 0
   return auftragPoints(sheet, key) + bonus
 }
 
@@ -286,7 +162,7 @@ export function computeTotals(sheet: Sheet): Totals {
   for (const category of CATEGORIES) {
     proAuftrag[category.key] = auftragPoints(sheet, category.key)
     auftraege += proAuftrag[category.key]
-    if (category.bonusLabel !== null) bonus += sheet.bonus[category.key] ?? 0
+    if (category.hasBonus) bonus += sheet.bonus[category.key] ?? 0
     proKategorie[category.key] = categoryTotal(sheet, category.key)
   }
 

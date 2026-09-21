@@ -2,6 +2,7 @@
 import AuftragsChips from './AuftragsChips.vue'
 import CatIcon from './CatIcon.vue'
 import NumberField from './NumberField.vue'
+import { t } from '../lib/i18n'
 import { CATEGORIES, type Sheet, type Totals } from '../lib/scoring'
 
 defineProps<{ sheet: Sheet; totals: Totals }>()
@@ -10,10 +11,10 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
 <template>
   <section class="panel">
     <header class="panel-head">
-      <h2>Aufträge</h2>
+      <h2>{{ t.ui.tasks }}</h2>
       <div class="head-sums">
-        <span>Aufträge {{ totals.auftraege }}</span>
-        <span>Fahnen &amp; Längste {{ totals.bonus }}</span>
+        <span>{{ t.ui.tasks }} {{ totals.auftraege }}</span>
+        <span>{{ t.ui.bonusRow }} {{ totals.bonus }}</span>
       </div>
     </header>
 
@@ -21,7 +22,7 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
       <li v-for="category in CATEGORIES" :key="category.key" class="row">
         <div class="row-head">
           <span class="icon-badge"><CatIcon :name="category.key" /></span>
-          <span class="row-name">{{ category.label }}</span>
+          <span class="row-name">{{ t.categories[category.key].label }}</span>
           <span class="row-sum" :class="{ zero: totals.proKategorie[category.key] === 0 }">
             {{ totals.proKategorie[category.key] }}
           </span>
@@ -30,39 +31,41 @@ defineProps<{ sheet: Sheet; totals: Totals }>()
         <div class="row-body">
           <div class="auftraege">
             <span class="field-label">
-              {{ category.auftragsFaktor ? 'Erfüllte Aufträge' : 'Aufträge' }}
+              {{ category.auftragsFaktor ? t.ui.completedTasks : t.ui.tasks }}
               <em v-if="category.auftragsWerte || category.auftragsFaktor">
-                {{ totals.proAuftrag[category.key] }} Pkt
+                {{ totals.proAuftrag[category.key] }} {{ t.ui.pointsShort }}
               </em>
             </span>
             <AuftragsChips
               v-if="category.auftragsWerte"
               v-model="sheet.auftragsChips[category.key]"
               :werte="category.auftragsWerte"
-              :kategorie="category.label"
+              :kategorie="t.categories[category.key].label"
             />
             <div v-else class="frei">
               <NumberField
                 v-model="sheet.auftraege[category.key]"
-                :label="category.auftragsFaktor ? 'Anzahl' : 'Aufträge'"
+                :label="category.auftragsFaktor ? t.ui.amount : t.ui.tasks"
                 hide-label
               />
               <span v-if="category.auftragsFaktor" class="faktor">
-                × {{ category.auftragsFaktor }} Punkte
+                × {{ category.auftragsFaktor }} {{ t.ui.points }}
               </span>
             </div>
           </div>
 
           <NumberField
-            v-if="category.bonusLabel"
+            v-if="category.hasBonus"
             v-model="sheet.bonus[category.key]"
-            :label="category.bonusLabel"
+            :label="t.categories[category.key].bonus ?? ''"
             class="bonus"
           />
-          <p v-else class="hatched">keine Wertung</p>
+          <p v-else class="hatched">{{ t.ui.noScore }}</p>
         </div>
 
-        <p v-if="category.bonusHint" class="row-hint">{{ category.bonusHint }}</p>
+        <p v-if="t.categories[category.key].bonusHint" class="row-hint">
+          {{ t.categories[category.key].bonusHint }}
+        </p>
       </li>
     </ul>
   </section>

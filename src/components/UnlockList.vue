@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import NumberField from './NumberField.vue'
+import { t } from '../lib/i18n'
 import { UNLOCKS, type Sheet, type Totals } from '../lib/scoring'
 
 defineProps<{ sheet: Sheet; totals: Totals }>()
-
-const factorText = (factor: number | null) => (factor === null ? '' : `× ${factor}`)
 </script>
 
 <template>
   <section class="panel">
     <header class="panel-head">
-      <h2>Freigespielt</h2>
+      <h2>{{ t.ui.unlocked }}</h2>
       <div class="head-sums">
-        <span>{{ totals.freigespielt }} Punkte</span>
+        <span>{{ totals.freigespielt }} {{ t.ui.points }}</span>
       </div>
     </header>
 
@@ -26,8 +25,8 @@ const factorText = (factor: number | null) => (factor === null ? '' : `× ${fact
         <label class="unlock-head">
           <input v-model="sheet.unlocks[unlock.id].enabled" type="checkbox" class="dot" />
           <span class="unlock-text">
-            <span class="unlock-name">{{ unlock.label }}</span>
-            <span class="unlock-hint">{{ unlock.hint }}</span>
+            <span class="unlock-name">{{ t.unlocks[unlock.id].label }}</span>
+            <span class="unlock-hint">{{ t.unlocks[unlock.id].hint }}</span>
           </span>
           <span v-if="sheet.unlocks[unlock.id].enabled" class="unlock-sum">
             {{ totals.proUnlock[unlock.id] }}
@@ -38,13 +37,13 @@ const factorText = (factor: number | null) => (factor === null ? '' : `× ${fact
           <div v-for="(field, index) in unlock.fields" :key="index" class="unlock-field">
             <NumberField
               v-model="sheet.unlocks[unlock.id].values[index]"
-              :label="field.label"
+              :label="t.unlocks[unlock.id].fields[index]"
               :max="field.max ?? 999"
             />
             <p v-if="field.factor !== null" class="calc">
-              {{ factorText(field.factor) }} =
+              × {{ field.factor }} =
               <strong>{{ (sheet.unlocks[unlock.id].values[index] ?? 0) * field.factor }}</strong>
-              Pkt
+              {{ t.ui.pointsShort }}
             </p>
           </div>
         </div>

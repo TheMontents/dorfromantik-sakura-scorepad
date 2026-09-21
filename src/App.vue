@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import ScoreTable from './components/ScoreTable.vue'
 import UnlockList from './components/UnlockList.vue'
+import { LOCALES, LOCALE_NAMES, locale, t } from './lib/i18n'
 import { computeTotals, createEmptySheet } from './lib/scoring'
 import { clearSheet, loadSheet, saveSheet } from './lib/storage'
 
@@ -11,7 +12,7 @@ const totals = computed(() => computeTotals(sheet.value))
 watch(sheet, (value) => saveSheet(value), { deep: true })
 
 const neuePartie = () => {
-  if (totals.value.ergebnis > 0 && !confirm('Bogen wirklich leeren und neue Partie starten?')) return
+  if (totals.value.ergebnis > 0 && !confirm(t.value.ui.confirmReset)) return
   clearSheet()
   sheet.value = createEmptySheet()
   window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -21,8 +22,16 @@ const neuePartie = () => {
 <template>
   <div class="app">
     <header class="top">
-      <p class="eyebrow">Dorfromantik</p>
-      <h1>Sakura Wertungsblock</h1>
+      <div class="top-text">
+        <p class="eyebrow">Dorfromantik</p>
+        <h1>{{ t.ui.title }}</h1>
+      </div>
+      <label class="lang">
+        <span class="sr-only">{{ t.ui.language }}</span>
+        <select v-model="locale">
+          <option v-for="code in LOCALES" :key="code" :value="code">{{ LOCALE_NAMES[code] }}</option>
+        </select>
+      </label>
     </header>
 
     <main>
@@ -30,19 +39,19 @@ const neuePartie = () => {
       <UnlockList :sheet="sheet" :totals="totals" />
 
       <section class="panel summary">
-        <h2 class="sr-only">Zwischensummen</h2>
+        <h2 class="sr-only">{{ t.ui.subtotals }}</h2>
         <dl>
-          <div><dt>Aufträge</dt><dd>{{ totals.auftraege }}</dd></div>
-          <div><dt>Fahnen &amp; Längste</dt><dd>{{ totals.bonus }}</dd></div>
-          <div><dt>Freigespielt</dt><dd>{{ totals.freigespielt }}</dd></div>
+          <div><dt>{{ t.ui.tasks }}</dt><dd>{{ totals.auftraege }}</dd></div>
+          <div><dt>{{ t.ui.bonusRow }}</dt><dd>{{ totals.bonus }}</dd></div>
+          <div><dt>{{ t.ui.unlocked }}</dt><dd>{{ totals.freigespielt }}</dd></div>
         </dl>
       </section>
     </main>
 
     <footer class="result">
-      <button type="button" class="reset" @click="neuePartie">Neue Partie</button>
+      <button type="button" class="reset" @click="neuePartie">{{ t.ui.newGame }}</button>
       <div class="result-score">
-        <span class="result-label">Ergebnis</span>
+        <span class="result-label">{{ t.ui.result }}</span>
         <span class="result-value">{{ totals.ergebnis }}</span>
       </div>
     </footer>
@@ -57,7 +66,37 @@ const neuePartie = () => {
 }
 
 .top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   padding: 1.1rem 0.35rem 0.9rem;
+}
+
+.top-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.lang {
+  flex: none;
+}
+
+.lang select {
+  appearance: none;
+  border: 1.5px solid rgba(255, 255, 255, 0.45);
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 0.4rem 0.7rem;
+  cursor: pointer;
+}
+
+.lang select option {
+  color: var(--ink);
+  background: #fff;
 }
 
 .eyebrow {
