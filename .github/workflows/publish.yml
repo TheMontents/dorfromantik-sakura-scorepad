@@ -44,6 +44,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.IMAGE }}
+          # latest=false is not the default: on a semver tag metadata-action adds
+          # `latest` on its own, which is exactly the moving tag the stacks
+          # must not pin.
+          flavor: latest=false
           tags: |
             type=semver,pattern={{version}}
             type=semver,pattern={{major}}.{{minor}}
