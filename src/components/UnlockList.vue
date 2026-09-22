@@ -9,6 +9,7 @@ const props = defineProps<{ game: Game; sheet: Sheet; totals: Totals }>()
 
 const text = computed(() => t.value.games[props.game.id])
 const unlocks = computed(() => activeUnlocks(props.game, props.sheet))
+const options = computed(() => props.game.options.filter((o) => o.placement === 'unlocks'))
 </script>
 
 <template>
@@ -38,6 +39,10 @@ const unlocks = computed(() => activeUnlocks(props.game, props.sheet))
           </span>
         </label>
 
+        <p v-if="unlock.computedFrom && sheet.unlocks[unlock.id].enabled" class="computed">
+          {{ t.ui.computedFromTasks }}
+        </p>
+
         <div v-if="sheet.unlocks[unlock.id].enabled" class="unlock-fields">
           <div v-for="(field, index) in unlock.fields" :key="index" class="unlock-field">
             <NumberField
@@ -54,6 +59,13 @@ const unlocks = computed(() => activeUnlocks(props.game, props.sheet))
         </div>
       </li>
     </ul>
+
+    <div v-if="options.length" class="options">
+      <label v-for="option in options" :key="option.id">
+        <input v-model="sheet.options[option.id]" type="checkbox" />
+        <span>{{ text.options[option.id] }}</span>
+      </label>
+    </div>
   </section>
 </template>
 
@@ -143,6 +155,40 @@ const unlocks = computed(() => activeUnlocks(props.game, props.sheet))
   flex-wrap: wrap;
   gap: 0.75rem;
   padding: 0 0.85rem 0.8rem 2.8rem;
+}
+
+/* The buildings have no input of their own – they score what lies on them. */
+.computed {
+  margin: 0;
+  padding: 0 0.85rem 0.7rem 2.8rem;
+  font-size: 0.75rem;
+  line-height: 1.35;
+  color: var(--accent-700);
+}
+
+.options {
+  border-top: 1px solid var(--line-soft);
+  background: var(--accent-25);
+  padding: 0.6rem 0.85rem;
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.18rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.options input {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  accent-color: var(--accent-600);
+  cursor: pointer;
 }
 
 .unlock-field {

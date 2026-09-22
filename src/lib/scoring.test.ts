@@ -9,6 +9,8 @@ import {
 } from './games'
 import {
   activeUnlocks,
+  doubledPoints,
+  doublingAvailable,
   markers,
   visibleMarkers,
   categoryTotal,
@@ -20,6 +22,13 @@ import {
 
 const classic = GAMES.classic
 const sakura = GAMES.sakura
+
+/** A sheet in which exactly this entry is unlocked and filled in. */
+const stateOf = (game: Game, unlock: Unlock, enabled: boolean, values: number[]) => {
+  const sheet = createEmptySheet(game)
+  sheet.unlocks[unlock.id] = { enabled, values }
+  return sheet
+}
 
 const unlockById = (game: Game, id: string): Unlock => {
   const unlock = game.unlocks.find((u) => u.id === id)
@@ -122,37 +131,36 @@ describe('activeUnlocks', () => {
 
 describe('unlockPoints', () => {
   it('does not count while the entry is locked', () => {
-    expect(unlockPoints(unlockById(sakura, 'bridges'), { enabled: false, values: [3] })).toBe(0)
+    expect(unlockPoints(sakura, stateOf(sakura, unlockById(sakura, 'bridges'), false, [3]), unlockById(sakura, 'bridges'))).toBe(0)
   })
 
   it('multiplies by the factor printed on the sheet', () => {
-    expect(unlockPoints(unlockById(sakura, 'bridges'), { enabled: true, values: [3] })).toBe(15)
-    expect(unlockPoints(unlockById(classic, 'signalman'), { enabled: true, values: [4] })).toBe(8)
-    expect(unlockPoints(unlockById(classic, 'circus'), { enabled: true, values: [1] })).toBe(10)
-    expect(unlockPoints(unlockById(classic, 'constructionSite'), { enabled: true, values: [2] })).toBe(14)
+    expect(unlockPoints(sakura, stateOf(sakura, unlockById(sakura, 'bridges'), true, [3]), unlockById(sakura, 'bridges'))).toBe(15)
+    expect(unlockPoints(classic, stateOf(classic, unlockById(classic, 'signalman'), true, [4]), unlockById(classic, 'signalman'))).toBe(8)
+    expect(unlockPoints(classic, stateOf(classic, unlockById(classic, 'circus'), true, [1]), unlockById(classic, 'circus'))).toBe(10)
+    expect(unlockPoints(classic, stateOf(classic, unlockById(classic, 'constructionSite'), true, [2]), unlockById(classic, 'constructionSite'))).toBe(14)
   })
 
   it('scores 6 points per enclosed temple, at most three temples', () => {
     const temples = unlockById(sakura, 'temples')
     expect(temples.fields[0].max).toBe(3)
-    expect(unlockPoints(temples, { enabled: true, values: [3] })).toBe(18)
+    expect(unlockPoints(sakura, stateOf(sakura, temples, true, [3]), temples)).toBe(18)
   })
 
   it('adds both hot spring rules: 3 per spring and 3 per Wraparound Task', () => {
-    expect(unlockPoints(unlockById(sakura, 'hotSprings'), { enabled: true, values: [2, 3] })).toBe(15)
+    expect(unlockPoints(sakura, stateOf(sakura, unlockById(sakura, 'hotSprings'), true, [2, 3]), unlockById(sakura, 'hotSprings'))).toBe(15)
   })
 
-  it('takes the entered value directly where the sheet prints no factor', () => {
-    // The five classic buildings hold task markers and have no factor
+  it('reads the five classic buildings off the doubled markers, not a field', () => {
     for (const id of ['forestCabin', 'harvestFestival', 'watchtower', 'locomotive', 'ship']) {
       const unlock = unlockById(classic, id)
-      expect(unlock.fields[0].factor).toBeNull()
-      expect(unlockPoints(unlock, { enabled: true, values: [11] })).toBe(11)
+      expect(unlock.fields).toHaveLength(0)
+      expect(unlock.computedFrom).toBeTruthy()
     }
   })
 
   it('copes with missing values', () => {
-    expect(unlockPoints(unlockById(sakura, 'hotSprings'), { enabled: true, values: [] })).toBe(0)
+    expect(unlockPoints(sakura, stateOf(sakura, unlockById(sakura, 'hotSprings'), true, []), unlockById(sakura, 'hotSprings'))).toBe(0)
   })
 })
 
@@ -160,13 +168,13 @@ describe('taskPoints', () => {
   it('sums the ticked markers only', () => {
     const sheet = createEmptySheet(classic)
     // Kanonisch 4,4,5,5,6,6,7 – ohne Option zaehlen nur 4,5,5,6,6
-    sheet.taskCards.forest = [true, false, true, false, true, false, false]
+    sheet.taskCards.forest = [1, 0, 1, 0, 1, 0, 0]
     expect(taskPoints(classic, sheet, 'forest')).toBe(15)
   })
 
   it('yields the full column when every marker is ticked', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.rail = [true, true, true, true, true, true]
+    sheet.taskCards.rail = [1, 1, 1, 1, 1, 1]
     expect(taskPoints(classic, sheet, 'rail')).toBe(26)
     sheet.options.secondFour = true
     expect(taskPoints(classic, sheet, 'rail')).toBe(30)
@@ -181,7 +189,7 @@ describe('taskPoints', () => {
   it('ignores a typed value in columns that use markers', () => {
     const sheet = createEmptySheet(classic)
     sheet.tasks.river = 99
-    sheet.taskCards.river = [false, false, true, false, true, false] // 5 + 6
+    sheet.taskCards.river = [0, 0, 1, 0, 1, 0] // 5 + 6
     expect(taskPoints(classic, sheet, 'river')).toBe(11)
   })
 })
@@ -189,7 +197,7 @@ describe('taskPoints', () => {
 describe('categoryTotal', () => {
   it('adds the task row and the bonus row', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.village = [true, false, false, false, true, false, false] // 4 + 6 = 10
+    sheet.taskCards.village = [1, 0, 0, 0, 1, 0, 0] // 4 + 6 = 10
     sheet.bonus.village = 5
     expect(categoryTotal(classic, sheet, 'village')).toBe(15)
   })
@@ -205,11 +213,11 @@ describe('categoryTotal', () => {
 describe('computeTotals', () => {
   it('sums the classic sheet row by row', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.forest = [true, false, true, false, true, false, false] // 4+5+6 = 15
-    sheet.taskCards.grain = [false, false, true, true, false, false, false] // 5+5 = 10
-    sheet.taskCards.village = [true, false, false, false, false, false, false] // 4
-    sheet.taskCards.rail = [true, true, true, true, true, true] // 26
-    sheet.taskCards.river = [false, false, false, false, true, true] // 12
+    sheet.taskCards.forest = [1, 0, 1, 0, 1, 0, 0] // 4+5+6 = 15
+    sheet.taskCards.grain = [0, 0, 1, 1, 0, 0, 0] // 5+5 = 10
+    sheet.taskCards.village = [1, 0, 0, 0, 0, 0, 0] // 4
+    sheet.taskCards.rail = [1, 1, 1, 1, 1, 1] // 26
+    sheet.taskCards.river = [0, 0, 0, 0, 1, 1] // 12
     sheet.bonus.forest = 7
     sheet.bonus.grain = 3
     sheet.bonus.village = 4
@@ -265,7 +273,7 @@ describe('campaign markers', () => {
 
   it('leaves a tick in place when an option is switched on', () => {
     const sheet = createEmptySheet(classic)
-    sheet.taskCards.forest[6] = true // der 7er
+    sheet.taskCards.forest[6] = 1 // der 7er
     expect(taskPoints(classic, sheet, 'forest')).toBe(0)
     sheet.options.tunnels = true
     expect(taskPoints(classic, sheet, 'forest')).toBe(7)
@@ -275,7 +283,59 @@ describe('campaign markers', () => {
     const sheet = createEmptySheet(classic)
     sheet.options.secondFour = true
     sheet.options.tunnels = true
-    sheet.taskCards.grain = sheet.taskCards.grain.map(() => true)
+    sheet.taskCards.grain = sheet.taskCards.grain.map(() => 1 as const)
     expect(taskPoints(classic, sheet, 'grain')).toBe(37)
+  })
+})
+
+describe('markers on a building', () => {
+  const forest = classic.categories[0]
+
+  it('offers the third state only while the building is unlocked', () => {
+    const sheet = createEmptySheet(classic)
+    expect(doublingAvailable(sheet, forest)).toBe(false)
+    sheet.unlocks.forestCabin.enabled = true
+    expect(doublingAvailable(sheet, forest)).toBe(true)
+  })
+
+  it('never offers it in Sakura, which has no such buildings', () => {
+    const sheet = createEmptySheet(sakura)
+    for (const category of sakura.categories) {
+      expect(doublingAvailable(sheet, category)).toBe(false)
+    }
+  })
+
+  it('counts a doubled marker once in the column and once in the building', () => {
+    const sheet = createEmptySheet(classic)
+    sheet.unlocks.forestCabin.enabled = true
+    sheet.taskCards.forest = [0, 0, 1, 0, 2, 0, 0] // one 5 completed, one 6 on the cabin
+
+    expect(taskPoints(classic, sheet, 'forest')).toBe(11)
+    expect(doubledPoints(classic, sheet, 'forest')).toBe(6)
+
+    const totals = computeTotals(classic, sheet)
+    expect(totals.tasks).toBe(11)
+    expect(totals.perUnlock.forestCabin).toBe(6)
+    expect(totals.result).toBe(17)
+  })
+
+  it('keeps the task points when the building is locked again', () => {
+    const sheet = createEmptySheet(classic)
+    sheet.unlocks.forestCabin.enabled = true
+    sheet.taskCards.forest = [0, 0, 0, 0, 2, 0, 0]
+    expect(computeTotals(classic, sheet).result).toBe(12)
+
+    sheet.unlocks.forestCabin.enabled = false
+    // The marker stays completed, only the second scoring falls away
+    expect(computeTotals(classic, sheet).result).toBe(6)
+  })
+
+  it('ignores a marker on a building that is not on the table yet', () => {
+    const sheet = createEmptySheet(classic)
+    sheet.unlocks.forestCabin.enabled = true
+    sheet.taskCards.forest[6] = 2 // the 7 from box 3
+    expect(doubledPoints(classic, sheet, 'forest')).toBe(0)
+    sheet.options.tunnels = true
+    expect(doubledPoints(classic, sheet, 'forest')).toBe(7)
   })
 })

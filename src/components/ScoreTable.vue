@@ -5,11 +5,14 @@ import CatIcon from './CatIcon.vue'
 import NumberField from './NumberField.vue'
 import { t } from '../lib/i18n'
 import type { Game } from '../lib/games'
-import { visibleMarkers, type Sheet, type Totals } from '../lib/scoring'
+import { doublingAvailable, visibleMarkers, type Sheet, type Totals } from '../lib/scoring'
 
 const props = defineProps<{ game: Game; sheet: Sheet; totals: Totals }>()
 
 const text = computed(() => t.value.games[props.game.id])
+
+/** Campaign switches that change the task markers belong right here. */
+const options = computed(() => props.game.options.filter((o) => o.placement === 'tasks'))
 </script>
 
 <template>
@@ -45,6 +48,7 @@ const text = computed(() => t.value.games[props.game.id])
               v-model="sheet.taskCards[category.key]"
               :markers="visibleMarkers(game, sheet, category)"
               :category="text.categories[category.key].label"
+              :doubling="doublingAvailable(sheet, category)"
             />
             <div v-else class="typed">
               <NumberField
@@ -67,11 +71,21 @@ const text = computed(() => t.value.games[props.game.id])
           <p v-else class="hatched">{{ t.ui.noScore }}</p>
         </div>
 
+        <p v-if="doublingAvailable(sheet, category)" class="row-hint doubling">
+          {{ t.ui.doublingHint }}
+        </p>
         <p v-if="text.categories[category.key].bonusHint" class="row-hint">
           {{ text.categories[category.key].bonusHint }}
         </p>
       </li>
     </ul>
+
+    <div v-if="options.length" class="options">
+      <label v-for="option in options" :key="option.id">
+        <input v-model="sheet.options[option.id]" type="checkbox" />
+        <span>{{ text.options[option.id] }}</span>
+      </label>
+    </div>
   </section>
 </template>
 
@@ -200,5 +214,34 @@ const text = computed(() => t.value.games[props.game.id])
   margin: 0.4rem 0 0;
   font-size: 0.75rem;
   color: var(--ink-soft);
+}
+
+.row-hint.doubling {
+  color: var(--accent-700);
+}
+
+.options {
+  border-top: 1px solid var(--line-soft);
+  background: var(--accent-25);
+  padding: 0.6rem 0.85rem;
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.18rem 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  cursor: pointer;
+}
+
+.options input {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex: none;
+  accent-color: var(--accent-600);
+  cursor: pointer;
 }
 </style>

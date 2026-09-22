@@ -17,6 +17,11 @@ export interface Category {
   /** Tags an option can single this category out by */
   tags?: string[]
   /**
+   * The building that takes completed task markers of this category: while it
+   * is unlocked, a marker can be tapped once more to count a second time.
+   */
+  doublingUnlock?: string
+  /**
    * Values of this category's task markers, ticked off one by one.
    * `null` = no fixed set of markers.
    */
@@ -45,6 +50,11 @@ export interface Unlock {
   fields: UnlockField[]
   /** Only on the score pad that includes the mini expansions */
   expansion?: boolean
+  /**
+   * Points come from the doubled task markers of this category instead of an
+   * input field – the building scores what lies on it.
+   */
+  computedFrom?: string
 }
 
 /**
@@ -53,6 +63,8 @@ export interface Unlock {
  */
 export interface GameOption {
   id: string
+  /** Where the switch belongs: next to the task table or the unlocked block */
+  placement: 'tasks' | 'unlocks'
   /** Adds one task marker of this value to every affected column */
   addsTaskValue?: number
   /** Restricts the option to categories carrying this tag */
@@ -79,25 +91,25 @@ const classic: Game = {
   // Box 1 adds a second 4 to every type (30 points per column), box 3 adds a
   // 7 to forest, grain and village along with the three tunnel achievements.
   options: [
-    { id: 'secondFour', addsTaskValue: 4 },
-    { id: 'tunnels', addsTaskValue: 7, onlyTagged: 'tunnel' },
-    { id: 'miniExpansions', showsExpansions: true },
+    { id: 'secondFour', placement: 'tasks', addsTaskValue: 4 },
+    { id: 'tunnels', placement: 'tasks', addsTaskValue: 7, onlyTagged: 'tunnel' },
+    { id: 'miniExpansions', placement: 'unlocks', showsExpansions: true },
   ],
   categories: [
-    { key: 'forest', icon: 'c-forest', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, tags: ['tunnel'] },
-    { key: 'grain', icon: 'c-grain', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, tags: ['tunnel'] },
-    { key: 'village', icon: 'c-village', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, tags: ['tunnel'] },
-    { key: 'rail', icon: 'c-rail', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
-    { key: 'river', icon: 'c-river', taskValues: CLASSIC_TASK_VALUES, hasBonus: true },
+    { key: 'forest', icon: 'c-forest', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, doublingUnlock: 'forestCabin', tags: ['tunnel'] },
+    { key: 'grain', icon: 'c-grain', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, doublingUnlock: 'harvestFestival', tags: ['tunnel'] },
+    { key: 'village', icon: 'c-village', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, doublingUnlock: 'watchtower', tags: ['tunnel'] },
+    { key: 'rail', icon: 'c-rail', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, doublingUnlock: 'locomotive' },
+    { key: 'river', icon: 'c-river', taskValues: CLASSIC_TASK_VALUES, hasBonus: true, doublingUnlock: 'ship' },
   ],
   unlocks: [
-    // The five buildings hold completed task markers; the sheet prints no
-    // factor for them, so their points are entered directly.
-    { id: 'forestCabin', fields: [{ factor: null }] },
-    { id: 'harvestFestival', fields: [{ factor: null }] },
-    { id: 'watchtower', fields: [{ factor: null }] },
-    { id: 'locomotive', fields: [{ factor: null }] },
-    { id: 'ship', fields: [{ factor: null }] },
+    // The five buildings hold completed task markers and score them a second
+    // time, so their points are not typed but read off the doubled markers.
+    { id: 'forestCabin', fields: [], computedFrom: 'forest' },
+    { id: 'harvestFestival', fields: [], computedFrom: 'grain' },
+    { id: 'watchtower', fields: [], computedFrom: 'village' },
+    { id: 'locomotive', fields: [], computedFrom: 'rail' },
+    { id: 'ship', fields: [], computedFrom: 'river' },
     { id: 'trainStation', fields: [{ factor: 1 }] },
     { id: 'harbour', fields: [{ factor: 1 }] },
     { id: 'redHearts', fields: [{ factor: 1 }] },

@@ -14,9 +14,15 @@ export interface UnlockState {
   values: number[]
 }
 
+/**
+ * State of one task marker: 0 = not completed, 1 = completed, 2 = completed and
+ * lying on its building, which scores the marker a second time.
+ */
+export type MarkerState = 0 | 1 | 2
+
 export interface Sheet {
-  /** Ticked task markers per category, indexed by the canonical marker list */
-  taskCards: Record<string, boolean[]>
+  /** State per task marker, indexed by the canonical marker list */
+  taskCards: Record<string, MarkerState[]>
   /** Task points entered directly – only for categories without a set */
   tasks: Record<string, number>
   bonus: Record<string, number>
@@ -62,11 +68,11 @@ export function visibleMarkers(
 }
 
 export function createEmptySheet(game: Game): Sheet {
-  const taskCards: Record<string, boolean[]> = {}
+  const taskCards: Record<string, MarkerState[]> = {}
   const tasks: Record<string, number> = {}
   const bonus: Record<string, number> = {}
   for (const category of game.categories) {
-    taskCards[category.key] = markers(game, category).map(() => false)
+    taskCards[category.key] = markers(game, category).map<MarkerState>(() => 0)
     tasks[category.key] = 0
     bonus[category.key] = 0
   }
@@ -87,9 +93,28 @@ export function activeUnlocks(game: Game, sheet: Sheet): Unlock[] {
   return game.unlocks.filter((unlock) => !unlock.expansion || showsExpansions)
 }
 
+/** Whether this category's markers can be put on their building right now. */
+export function doublingAvailable(sheet: Sheet, category: Category): boolean {
+  const id = category.doublingUnlock
+  return id !== undefined && sheet.unlocks[id]?.enabled === true
+}
+
+/** What a building earns: the values of the markers lying on it. */
+export function doubledPoints(game: Game, sheet: Sheet, key: string): number {
+  const category = game.categories.find((c) => c.key === key)
+  if (!category || !doublingAvailable(sheet, category)) return 0
+  const cards = sheet.taskCards[key] ?? []
+  return visibleMarkers(game, sheet, category).reduce(
+    (sum, { marker, index }) => sum + (cards[index] === 2 ? marker.value : 0),
+    0,
+  )
+}
+
 /** Points of a single unlocked entry (0 while it is not unlocked). */
-export function unlockPoints(unlock: Unlock, state: UnlockState | undefined): number {
+export function unlockPoints(game: Game, sheet: Sheet, unlock: Unlock): number {
+  const state = sheet.unlocks[unlock.id]
   if (!state?.enabled) return 0
+  if (unlock.computedFrom) return doubledPoints(game, sheet, unlock.computedFrom)
   return unlock.fields.reduce(
     (sum, field, index) => sum + (state.values[index] ?? 0) * (field.factor ?? 1),
     0,
@@ -143,7 +168,7 @@ export function computeTotals(game: Game, sheet: Sheet): Totals {
   const perUnlock: Record<string, number> = {}
   let unlocked = 0
   for (const unlock of activeUnlocks(game, sheet)) {
-    const points = unlockPoints(unlock, sheet.unlocks[unlock.id])
+    const points = unlockPoints(game, sheet, unlock)
     perUnlock[unlock.id] = points
     unlocked += points
   }

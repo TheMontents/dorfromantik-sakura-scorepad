@@ -19,7 +19,7 @@ game in progress survives a look at the other pad.
 | Flags | green, yellow, red | pink, green, red |
 | Longest | Track and Stream | Road and River |
 | Unlocked entries | 15, plus 8 from the mini expansions | 14 |
-| Campaign switches | second 4, tunnels, mini expansions | – |
+| Campaign switches | second 4, tunnels (under Tasks), mini expansions (under Unlocked) | – |
 | Colours | meadow green | cherry blossom pink |
 
 **Task row** – the markers of a column are tapped rather than typed, so only
@@ -42,9 +42,16 @@ Wraparound Task along the longest connection.
 
 **Unlocked** – an entry only counts once it is ticked; its input fields appear
 then. Where the sheet gives a factor, the app does the maths (e.g. 3 bridges ×
-5 = 15 points). Where it gives none – the classic buildings that hold task
-markers, collected cherry blossoms – the points are entered directly. Temples
-are capped at 3, because there are only three temple tiles.
+5 = 15 points); collected cherry blossoms have none and are entered directly.
+Temples are capped at 3, because there are only three temple tiles.
+
+The five classic buildings – forest cabin, harvest festival, watchtower,
+locomotive, ship – have no input field at all. They hold completed task markers
+and score them *again*, so their points are read off the task table: while such
+a building is ticked, tapping one of its markers a second time marks it as lying
+on the building (the chip turns darker and gets a ×2). It then counts once in
+its column and once in the building's line, which is where the printed sheet
+puts it too.
 
 The structures and factors come from the rulebooks and score pads published by
 Pegasus Spiele: 07/2025 for Sakura, the 2024 edition for the classic pad.

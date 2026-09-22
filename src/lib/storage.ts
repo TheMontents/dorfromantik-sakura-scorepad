@@ -1,9 +1,16 @@
 import type { Game, GameId } from './games'
-import { createEmptySheet, markers, type Sheet } from './scoring'
+import { createEmptySheet, markers, type MarkerState, type Sheet } from './scoring'
 
 /** One stored sheet per game, so both can be in progress at the same time. */
 const sheetKey = (game: GameId) => `dorfromantik:sheet:${game}:v4`
 const GAME_KEY = 'dorfromantik:game'
+
+/** Markers used to be plain booleans, before they could lie on a building. */
+const toMarkerState = (value: unknown): MarkerState => {
+  if (value === true || value === 1) return 1
+  if (value === 2) return 2
+  return 0
+}
 
 const toNumber = (value: unknown): number => {
   const n = Number(value)
@@ -42,8 +49,8 @@ export function loadSheet(game: Game): Sheet {
     }
     for (const category of game.categories) {
       const cards = stored.taskCards?.[category.key]
-      sheet.taskCards[category.key] = markers(game, category).map(
-        (_, index) => cards?.[index] === true,
+      sheet.taskCards[category.key] = markers(game, category).map<MarkerState>((_, index) =>
+        toMarkerState(cards?.[index]),
       )
       sheet.tasks[category.key] = toNumber(stored.tasks?.[category.key])
       sheet.bonus[category.key] = toNumber(stored.bonus?.[category.key])

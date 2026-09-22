@@ -83,14 +83,6 @@ const startNewGame = () => {
       <ScoreTable :game="game" :sheet="sheet" :totals="totals" />
       <UnlockList :game="game" :sheet="sheet" :totals="totals" />
 
-      <section v-if="game.options.length" class="options">
-        <h2>{{ t.ui.campaignMaterial }}</h2>
-        <label v-for="option in game.options" :key="option.id">
-          <input v-model="sheet.options[option.id]" type="checkbox" />
-          <span>{{ text.options[option.id] }}</span>
-        </label>
-      </section>
-
       <section class="panel summary">
         <h2 class="sr-only">{{ t.ui.subtotals }}</h2>
         <dl>
@@ -210,38 +202,6 @@ main {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
-}
-
-.options {
-  padding: 0 0.35rem;
-  color: #fff;
-}
-
-.options h2 {
-  margin: 0 0 0.4rem;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.09em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.options label {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  padding: 0.18rem 0;
-  font-size: 0.85rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.options input {
-  width: 1.15rem;
-  height: 1.15rem;
-  flex: none;
-  accent-color: #fff;
-  cursor: pointer;
 }
 
 .summary dl {

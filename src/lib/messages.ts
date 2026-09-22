@@ -72,7 +72,12 @@ export interface Messages {
     cancel: string
     clear: string
     game: string
-    campaignMaterial: string
+    /** Marker state for screen readers */
+    onBuilding: string
+    /** Explains the third state of a task marker */
+    doublingHint: string
+    /** Explains why a building has no input field */
+    computedFromTasks: string
     disclaimer: string
   }
   games: Record<GameId, GameText>
@@ -101,7 +106,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Abbrechen',
       clear: 'Leeren',
       game: 'Spiel',
-      campaignMaterial: 'Kampagnenmaterial',
+      onBuilding: 'liegt auf dem Gebäude',
+      doublingHint: 'Zweimal tippen: der Auftrag liegt auf dem Gebäude und zählt noch einmal',
+      computedFromTasks: 'Ergibt sich aus den Aufträgen, die oben zweimal angetippt sind',
       disclaimer: 'Inoffizielles Fan-Projekt, nicht mit Pegasus Spiele verbunden. Dorfromantik ist eine Marke von Pegasus Spiele.',
     },
     games: {
@@ -139,27 +146,27 @@ export const MESSAGES: Record<Locale, Messages> = {
           forestCabin: {
             label: 'Waldhütte',
             hint: 'Wald-Aufträge',
-            fields: ['Punkte'],
+            fields: [],
           },
           harvestFestival: {
             label: 'Erntefest',
             hint: 'Getreide-Aufträge',
-            fields: ['Punkte'],
+            fields: [],
           },
           watchtower: {
             label: 'Wachturm',
             hint: 'Dorf-Aufträge',
-            fields: ['Punkte'],
+            fields: [],
           },
           locomotive: {
             label: 'Lokomotive',
             hint: 'Gleis-Aufträge',
-            fields: ['Punkte'],
+            fields: [],
           },
           ship: {
             label: 'Schiff',
             hint: 'Fluss-Aufträge',
-            fields: ['Punkte'],
+            fields: [],
           },
           trainStation: {
             label: 'Bahnhof',
@@ -395,7 +402,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Cancel',
       clear: 'Clear',
       game: 'Game',
-      campaignMaterial: 'Campaign material',
+      onBuilding: 'on its building',
+      doublingHint: 'Tap twice: the task lies on its building and scores again',
+      computedFromTasks: 'Adds up from the tasks tapped twice above',
       disclaimer: 'Unofficial fan project, not affiliated with Pegasus Spiele. Dorfromantik is a trademark of Pegasus Spiele.',
     },
     games: {
@@ -433,27 +442,27 @@ export const MESSAGES: Record<Locale, Messages> = {
           forestCabin: {
             label: 'Forest Cabin',
             hint: 'Forest Tasks',
-            fields: ['Points'],
+            fields: [],
           },
           harvestFestival: {
             label: 'Harvest Festival',
             hint: 'Grain Tasks',
-            fields: ['Points'],
+            fields: [],
           },
           watchtower: {
             label: 'Watchtower',
             hint: 'Village Tasks',
-            fields: ['Points'],
+            fields: [],
           },
           locomotive: {
             label: 'Locomotive',
             hint: 'Track Tasks',
-            fields: ['Points'],
+            fields: [],
           },
           ship: {
             label: 'Ship',
             hint: 'Stream Tasks',
-            fields: ['Points'],
+            fields: [],
           },
           trainStation: {
             label: 'Train Station',
@@ -689,7 +698,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Annuler',
       clear: 'Vider',
       game: 'Jeu',
-      campaignMaterial: 'Matériel de campagne',
+      onBuilding: 'posée sur le bâtiment',
+      doublingHint: 'Appuyer deux fois : la mission est posée sur le bâtiment et compte une seconde fois',
+      computedFromTasks: 'Se calcule à partir des missions appuyées deux fois ci-dessus',
       disclaimer: 'Projet de fan non officiel, sans lien avec Pegasus Spiele. Dorfromantik est une marque de Pegasus Spiele.',
     },
     games: {
@@ -727,27 +738,27 @@ export const MESSAGES: Record<Locale, Messages> = {
           forestCabin: {
             label: 'Cabane forestière',
             hint: 'missions Forêt',
-            fields: ['Points'],
+            fields: [],
           },
           harvestFestival: {
             label: 'Fête des moissons',
             hint: 'missions Céréales',
-            fields: ['Points'],
+            fields: [],
           },
           watchtower: {
             label: 'Tour de guet',
             hint: 'missions Village',
-            fields: ['Points'],
+            fields: [],
           },
           locomotive: {
             label: 'Locomotive',
             hint: 'missions Voie ferrée',
-            fields: ['Points'],
+            fields: [],
           },
           ship: {
             label: 'Bateau',
             hint: 'missions Rivière',
-            fields: ['Points'],
+            fields: [],
           },
           trainStation: {
             label: 'Gare',
@@ -983,7 +994,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Annulla',
       clear: 'Svuota',
       game: 'Gioco',
-      campaignMaterial: 'Materiale della campagna',
+      onBuilding: "sull'edificio",
+      doublingHint: "Tocca due volte: l'incarico è sull'edificio e conta una seconda volta",
+      computedFromTasks: 'Risulta dagli incarichi toccati due volte qui sopra',
       disclaimer: 'Progetto amatoriale non ufficiale, non affiliato a Pegasus Spiele. Dorfromantik è un marchio di Pegasus Spiele.',
     },
     games: {
@@ -1021,27 +1034,27 @@ export const MESSAGES: Record<Locale, Messages> = {
           forestCabin: {
             label: 'Capanna nel bosco',
             hint: 'incarichi Bosco',
-            fields: ['Punti'],
+            fields: [],
           },
           harvestFestival: {
             label: 'Festa del raccolto',
             hint: 'incarichi Grano',
-            fields: ['Punti'],
+            fields: [],
           },
           watchtower: {
             label: 'Torre di guardia',
             hint: 'incarichi Villaggio',
-            fields: ['Punti'],
+            fields: [],
           },
           locomotive: {
             label: 'Locomotiva',
             hint: 'incarichi Binari',
-            fields: ['Punti'],
+            fields: [],
           },
           ship: {
             label: 'Nave',
             hint: 'incarichi Fiume',
-            fields: ['Punti'],
+            fields: [],
           },
           trainStation: {
             label: 'Stazione',
@@ -1277,7 +1290,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Cancelar',
       clear: 'Vaciar',
       game: 'Juego',
-      campaignMaterial: 'Material de campaña',
+      onBuilding: 'sobre el edificio',
+      doublingHint: 'Pulsa dos veces: la misión está sobre el edificio y puntúa otra vez',
+      computedFromTasks: 'Resulta de las misiones pulsadas dos veces arriba',
       disclaimer: 'Proyecto de fans no oficial, sin vinculación con Pegasus Spiele. Dorfromantik es una marca de Pegasus Spiele.',
     },
     games: {
@@ -1315,27 +1330,27 @@ export const MESSAGES: Record<Locale, Messages> = {
           forestCabin: {
             label: 'Cabaña forestal',
             hint: 'misiones de Bosque',
-            fields: ['Puntos'],
+            fields: [],
           },
           harvestFestival: {
             label: 'Fiesta de la cosecha',
             hint: 'misiones de Cereal',
-            fields: ['Puntos'],
+            fields: [],
           },
           watchtower: {
             label: 'Torre de vigilancia',
             hint: 'misiones de Pueblo',
-            fields: ['Puntos'],
+            fields: [],
           },
           locomotive: {
             label: 'Locomotora',
             hint: 'misiones de Vía férrea',
-            fields: ['Puntos'],
+            fields: [],
           },
           ship: {
             label: 'Barco',
             hint: 'misiones de Río',
-            fields: ['Puntos'],
+            fields: [],
           },
           trainStation: {
             label: 'Estación',
@@ -1571,7 +1586,9 @@ export const MESSAGES: Record<Locale, Messages> = {
       cancel: 'Anuluj',
       clear: 'Wyczyść',
       game: 'Gra',
-      campaignMaterial: 'Materiał kampanii',
+      onBuilding: 'leży na budynku',
+      doublingHint: 'Dotknij dwa razy: zlecenie leży na budynku i liczy się ponownie',
+      computedFromTasks: 'Wynika ze zleceń dotkniętych dwukrotnie powyżej',
       disclaimer: 'Nieoficjalny projekt fanowski, niezwiązany z Pegasus Spiele. Dorfromantik jest znakiem towarowym Pegasus Spiele.',
     },
     games: {
@@ -1609,27 +1626,27 @@ export const MESSAGES: Record<Locale, Messages> = {
           forestCabin: {
             label: 'Leśniczówka',
             hint: 'zlecenia leśne',
-            fields: ['Punkty'],
+            fields: [],
           },
           harvestFestival: {
             label: 'Dożynki',
             hint: 'zlecenia zbożowe',
-            fields: ['Punkty'],
+            fields: [],
           },
           watchtower: {
             label: 'Wieża strażnicza',
             hint: 'zlecenia wioskowe',
-            fields: ['Punkty'],
+            fields: [],
           },
           locomotive: {
             label: 'Lokomotywa',
             hint: 'zlecenia torowe',
-            fields: ['Punkty'],
+            fields: [],
           },
           ship: {
             label: 'Statek',
             hint: 'zlecenia rzeczne',
-            fields: ['Punkty'],
+            fields: [],
           },
           trainStation: {
             label: 'Dworzec',
