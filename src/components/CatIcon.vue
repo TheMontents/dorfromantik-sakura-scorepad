@@ -1,141 +1,135 @@
 <script setup lang="ts">
 /**
- * Category glyphs for both score pads. The shapes follow the task markers of
- * the printed games: a white silhouette on the colour of the terrain.
+ * Category glyphs for both score pads, drawn like the games' task markers: a
+ * rounded square in the colour of the terrain with a white symbol on it.
+ *
+ * The printed markers put a white speech bubble between the two and the symbol
+ * inside that; at icon size those three layers turn to mush, so the middle one
+ * is dropped. Only the "7" keeps its bubble, because a numeral survives it.
  */
-defineProps<{ name: string }>()
+const props = defineProps<{ name: string }>()
+
+/** Badge colour per category, taken from the tiles and markers of the games. */
+const BADGE: Record<string, string> = {
+  'c-forest': '#4b8b2b',
+  'c-grain': '#cf9a12',
+  'c-village': '#d1452a',
+  'c-rail': '#5f676e',
+  'c-river': '#3f9bd1',
+  's-cherry': '#e07aa5',
+  's-rice': '#6ba63a',
+  's-village': '#7b5544',
+  's-road': '#4a3a31',
+  's-river': '#2fb3ab',
+  's-wraparound': '#3b332c',
+  's-seven': '#c9566d',
+}
+
+const badge = () => BADGE[props.name] ?? '#8a8a8a'
 </script>
 
 <template>
   <svg class="cat-icon" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-    <!-- ---------- Sakura ---------- -->
+    <rect x="1.5" y="1.5" width="29" height="29" rx="7.5" :fill="badge()" />
+
+    <!-- Forest / Rice: a treetop over a trunk -->
+    <g v-if="name === 'c-forest'" fill="#fff">
+      <circle cx="11.4" cy="15.2" r="4.9" />
+      <circle cx="20.6" cy="15.2" r="4.9" />
+      <circle cx="16" cy="11" r="5.6" />
+      <rect x="14.6" y="17.4" width="2.8" height="7.6" rx="1.3" />
+    </g>
+
+    <!-- Grain / Rice: an ear on its stalk -->
+    <g v-else-if="name === 'c-grain' || name === 's-rice'" fill="#fff">
+      <rect x="15.1" y="14" width="1.8" height="11.4" rx="0.9" />
+      <g v-for="i in 3" :key="i">
+        <ellipse
+          :cx="12.3"
+          :cy="10.4 + (i - 1) * 3.6"
+          rx="2.1"
+          ry="3.2"
+          :transform="`rotate(-38 12.3 ${10.4 + (i - 1) * 3.6})`"
+        />
+        <ellipse
+          :cx="19.7"
+          :cy="10.4 + (i - 1) * 3.6"
+          rx="2.1"
+          ry="3.2"
+          :transform="`rotate(38 19.7 ${10.4 + (i - 1) * 3.6})`"
+        />
+      </g>
+      <ellipse cx="16" cy="8.2" rx="2.1" ry="3.4" />
+    </g>
+
+    <!-- Village: pitched roof over the house -->
+    <g v-else-if="name === 'c-village' || name === 's-village'" fill="#fff">
+      <path d="M16 6.4l10.6 8.4H5.4z" />
+      <rect x="9.2" y="15.6" width="13.6" height="9.8" rx="1.6" />
+    </g>
+
+    <!-- Track: two rails on their sleepers -->
+    <g v-else-if="name === 'c-rail'" stroke="#fff" stroke-linecap="round" fill="none">
+      <g stroke-width="2.6">
+        <line x1="11.6" y1="6.4" x2="11.6" y2="25.6" />
+        <line x1="20.4" y1="6.4" x2="20.4" y2="25.6" />
+      </g>
+      <g stroke-width="2.2">
+        <line v-for="i in 3" :key="i" x1="7.6" :y1="5.2 + i * 5.4" x2="24.4" :y2="5.2 + i * 5.4" />
+      </g>
+    </g>
+
+    <!-- Stream / River: a drop -->
+    <path
+      v-else-if="name === 'c-river' || name === 's-river'"
+      d="M16 5.6c4 4.6 7.2 8.3 7.2 12 0 4.2-3.2 7.5-7.2 7.5s-7.2-3.3-7.2-7.5c0-3.7 3.2-7.4 7.2-12z"
+      fill="#fff"
+    />
 
     <!-- Cherry blossom: five petals around a stamen -->
-    <g v-if="name === 's-cherry'" fill="#f2a6c4" stroke="#fff" stroke-width="1.4">
+    <g v-else-if="name === 's-cherry'" fill="#fff">
       <ellipse
         v-for="i in 5"
         :key="i"
         cx="16"
-        cy="8.5"
-        rx="4.6"
-        ry="6"
+        cy="9.4"
+        rx="4"
+        ry="5.4"
         :transform="`rotate(${(i - 1) * 72} 16 16)`"
       />
-      <circle cx="16" cy="16" r="2.6" fill="#e07aa5" />
+      <circle cx="16" cy="16" r="2.4" :fill="badge()" />
     </g>
 
-    <!-- Rice field: rounded patch of land -->
-    <path
-      v-else-if="name === 's-rice'"
-      d="M9 7h11c3 0 5 2 5 5v11c0 2-1.6 3.5-3.6 3.5H10c-2.4 0-4.4-2-4.4-4.4V11C5.6 8.8 7 7 9 7z"
-      fill="#82bb4a"
-      stroke="#fff"
-      stroke-width="1.6"
-      stroke-linejoin="round"
-    />
-
-    <!-- Village: gabled house -->
-    <path
-      v-else-if="name === 's-village'"
-      d="M16 5.5l9 6.2v10.9c0 2-1.5 3.4-3.5 3.4h-11c-2 0-3.5-1.4-3.5-3.4V11.7z"
-      fill="#7b5544"
-      stroke="#fff"
-      stroke-width="1.6"
-      stroke-linejoin="round"
-    />
-
-    <!-- Roads: winding stretch of road -->
+    <!-- Roads: a winding road -->
     <path
       v-else-if="name === 's-road'"
-      d="M10.5 26c-2 0-3.4-1.6-3-3.6C8.6 16 12 13.6 16 12.4c2.6-.8 3.6-1.6 3.6-3 0-1.4-1.2-2.4-3-2.4H12c-1.8 0-3-1-3-2.2h12.2c3.4 0 5.6 2 5.6 4.8 0 3.2-2.2 5-6.2 6.2-3.4 1-5 2.6-5.6 6-.3 2.2-1.6 4.2-4.5 4.2z"
-      fill="#3f2f28"
-      stroke="#fff"
-      stroke-width="1.5"
-      stroke-linejoin="round"
+      d="M11.6 25.4c-1.7 0-2.9-1.4-2.6-3.1.9-5.4 3.8-7.4 7.2-8.4 2.2-.7 3-1.4 3-2.5 0-1.2-1-2-2.5-2h-4.7c-1.5 0-2.5-.9-2.5-1.9h10.4c2.9 0 4.8 1.7 4.8 4.1 0 2.7-1.9 4.3-5.3 5.3-2.9.9-4.3 2.2-4.8 5.1-.3 1.9-1.4 3.4-3 3.4z"
+      fill="#fff"
     />
 
-    <!-- Sakura river: water drop -->
-    <path
-      v-else-if="name === 's-river'"
-      d="M16 4.5c4.4 5 8 9 8 13.1 0 4.6-3.6 8.2-8 8.2s-8-3.6-8-8.2c0-4.1 3.6-8.1 8-13.1z"
-      fill="#4ec7c0"
-      stroke="#fff"
-      stroke-width="1.6"
-      stroke-linejoin="round"
-    />
-
-    <!-- Wraparound Task: closed ring of segments -->
+    <!-- Wraparound Task: a closed ring of segments -->
     <circle
       v-else-if="name === 's-wraparound'"
       cx="16"
       cy="16"
-      r="9.4"
+      r="8.4"
       fill="none"
-      stroke="#2f2620"
-      stroke-width="5.4"
-      stroke-dasharray="4.6 3.2"
+      stroke="#fff"
+      stroke-width="4.6"
+      stroke-dasharray="4 2.8"
       stroke-linecap="round"
     />
 
-    <!-- The "7" column: speech bubble with a number -->
+    <!-- The "7" column: the sheet's speech bubble, the one place it survives -->
     <g v-else-if="name === 's-seven'">
       <path
-        d="M6.5 7.5h19c1.4 0 2.5 1.1 2.5 2.5v9.6c0 1.4-1.1 2.5-2.5 2.5H14l-5.4 4.2.5-4.2H6.5C5.1 22.1 4 21 4 19.6V10c0-1.4 1.1-2.5 2.5-2.5z"
+        d="M8 7.6h16c1.3 0 2.3 1 2.3 2.3v8.4c0 1.3-1 2.3-2.3 2.3h-9.6l-4.6 3.8.4-3.8H8c-1.3 0-2.3-1-2.3-2.3V9.9c0-1.3 1-2.3 2.3-2.3z"
         fill="#fff"
-        stroke="#c9566d"
-        stroke-width="1.4"
-        stroke-linejoin="round"
       />
-      <text x="16" y="19.6" text-anchor="middle" font-size="12" font-weight="700" fill="#3f2f28">
+      <text x="16" y="18.2" text-anchor="middle" font-size="11" font-weight="700" :fill="badge()">
         7
       </text>
     </g>
-
-    <!-- ---------- Classic ---------- -->
-
-    <!-- Forest: a cluster of treetops -->
-    <g v-else-if="name === 'c-forest'" fill="#3f7d31" stroke="#fff" stroke-width="1.3">
-      <circle cx="10.5" cy="19" r="5.6" />
-      <circle cx="21.5" cy="19" r="5.6" />
-      <circle cx="16" cy="11.5" r="6.6" />
-    </g>
-
-    <!-- Grain: the wedge-shaped field of the tiles -->
-    <path
-      v-else-if="name === 'c-grain'"
-      d="M16 5.6l11 7.4-4.3 12.4c-.4 1.2-1.5 2-2.8 2H12c-1.3 0-2.4-.8-2.8-2L5 13z"
-      fill="#f0bf33"
-      stroke="#fff"
-      stroke-width="1.6"
-      stroke-linejoin="round"
-    />
-
-    <!-- Village: red-roofed house -->
-    <g v-else-if="name === 'c-village'" stroke="#fff" stroke-width="1.5" stroke-linejoin="round">
-      <path d="M16 5.2l11 8.2H5z" fill="#d94f32" />
-      <path d="M8.6 13.4h14.8v9.4c0 2-1.4 3.4-3.4 3.4h-8c-2 0-3.4-1.4-3.4-3.4z" fill="#e8e2d6" />
-    </g>
-
-    <!-- Track: two rails with sleepers -->
-    <g v-else-if="name === 'c-rail'">
-      <g stroke="#8d949b" stroke-width="3.1" stroke-linecap="round">
-        <line x1="11" y1="5.5" x2="11" y2="26.5" />
-        <line x1="21" y1="5.5" x2="21" y2="26.5" />
-      </g>
-      <g stroke="#fff" stroke-width="2.3" stroke-linecap="round">
-        <line v-for="i in 4" :key="i" x1="7.5" :y1="4 + i * 5.4" x2="24.5" :y2="4 + i * 5.4" />
-      </g>
-    </g>
-
-    <!-- Stream: water drop in the light blue of the tiles -->
-    <path
-      v-else-if="name === 'c-river'"
-      d="M16 4.5c4.4 5 8 9 8 13.1 0 4.6-3.6 8.2-8 8.2s-8-3.6-8-8.2c0-4.1 3.6-8.1 8-13.1z"
-      fill="#5bb4e0"
-      stroke="#fff"
-      stroke-width="1.6"
-      stroke-linejoin="round"
-    />
   </svg>
 </template>
 
