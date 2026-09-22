@@ -339,3 +339,15 @@ describe('markers on a building', () => {
     expect(doubledPoints(classic, sheet, 'forest')).toBe(7)
   })
 })
+
+describe('entries that exist only once', () => {
+  it('caps the circus at one, because box 3 holds a single tile', () => {
+    const circus = unlockById(classic, 'circus')
+    expect(circus.fields[0].max).toBe(1)
+    expect(unlockPoints(classic, stateOf(classic, circus, true, [1]), circus)).toBe(10)
+  })
+
+  it('caps the temples at three, the number of temple tiles in Sakura', () => {
+    expect(unlockById(sakura, 'temples').fields[0].max).toBe(3)
+  })
+})

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import BoolField from './BoolField.vue'
 import NumberField from './NumberField.vue'
 import { t } from '../lib/i18n'
 import type { Game } from '../lib/games'
@@ -45,12 +46,18 @@ const options = computed(() => props.game.options.filter((o) => o.placement === 
 
         <div v-if="sheet.unlocks[unlock.id].enabled" class="unlock-fields">
           <div v-for="(field, index) in unlock.fields" :key="index" class="unlock-field">
+            <BoolField
+              v-if="field.max === 1"
+              v-model="sheet.unlocks[unlock.id].values[index]"
+              :label="text.unlocks[unlock.id].fields[index]"
+            />
             <NumberField
+              v-else
               v-model="sheet.unlocks[unlock.id].values[index]"
               :label="text.unlocks[unlock.id].fields[index]"
               :max="field.max ?? 999"
             />
-            <p v-if="field.factor !== null" class="calc">
+            <p v-if="field.factor !== null && field.max !== 1" class="calc">
               × {{ field.factor }} =
               <strong>{{ (sheet.unlocks[unlock.id].values[index] ?? 0) * field.factor }}</strong>
               {{ t.ui.pointsShort }}

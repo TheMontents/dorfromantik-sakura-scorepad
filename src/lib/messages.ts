@@ -69,6 +69,8 @@ export interface Messages {
     /** {category} = name of the category */
     taskGroup: string
     language: string
+    yes: string
+    no: string
     cancel: string
     clear: string
     game: string
@@ -103,6 +105,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Auftrag über {points} Punkte',
       taskGroup: 'Aufträge {category}',
       language: 'Sprache',
+      yes: 'Ja',
+      no: 'Nein',
       cancel: 'Abbrechen',
       clear: 'Leeren',
       game: 'Spiel',
@@ -186,7 +190,7 @@ export const MESSAGES: Record<Locale, Messages> = {
           circus: {
             label: 'Zirkus',
             hint: 'umschlossen = 10',
-            fields: ['Umschlossene Zirkusse'],
+            fields: ['Umschlossen'],
           },
           signalman: {
             label: 'Bahnwärter',
@@ -399,6 +403,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Task worth {points} points',
       taskGroup: '{category} Tasks',
       language: 'Language',
+      yes: 'Yes',
+      no: 'No',
       cancel: 'Cancel',
       clear: 'Clear',
       game: 'Game',
@@ -482,7 +488,7 @@ export const MESSAGES: Record<Locale, Messages> = {
           circus: {
             label: 'Circus',
             hint: 'completely surrounded = 10',
-            fields: ['Surrounded circuses'],
+            fields: ['Surrounded'],
           },
           signalman: {
             label: 'Signalman',
@@ -695,6 +701,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Mission à {points} points',
       taskGroup: 'Missions {category}',
       language: 'Langue',
+      yes: 'Oui',
+      no: 'Non',
       cancel: 'Annuler',
       clear: 'Vider',
       game: 'Jeu',
@@ -778,7 +786,7 @@ export const MESSAGES: Record<Locale, Messages> = {
           circus: {
             label: 'Cirque',
             hint: 'entièrement entouré = 10',
-            fields: ['Cirques entourés'],
+            fields: ['Entouré'],
           },
           signalman: {
             label: 'Garde-barrière',
@@ -991,6 +999,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Incarico da {points} punti',
       taskGroup: 'Incarichi {category}',
       language: 'Lingua',
+      yes: 'Sì',
+      no: 'No',
       cancel: 'Annulla',
       clear: 'Svuota',
       game: 'Gioco',
@@ -1074,7 +1084,7 @@ export const MESSAGES: Record<Locale, Messages> = {
           circus: {
             label: 'Circo',
             hint: 'completamente circondato = 10',
-            fields: ['Circhi circondati'],
+            fields: ['Circondato'],
           },
           signalman: {
             label: 'Casellante',
@@ -1287,6 +1297,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Misión de {points} puntos',
       taskGroup: 'Misiones {category}',
       language: 'Idioma',
+      yes: 'Sí',
+      no: 'No',
       cancel: 'Cancelar',
       clear: 'Vaciar',
       game: 'Juego',
@@ -1370,7 +1382,7 @@ export const MESSAGES: Record<Locale, Messages> = {
           circus: {
             label: 'Circo',
             hint: 'completamente rodeado = 10',
-            fields: ['Circos rodeados'],
+            fields: ['Rodeado'],
           },
           signalman: {
             label: 'Guardabarrera',
@@ -1583,6 +1595,8 @@ export const MESSAGES: Record<Locale, Messages> = {
       taskCard: 'Zlecenie za {points} punktów',
       taskGroup: 'Zlecenia: {category}',
       language: 'Język',
+      yes: 'Tak',
+      no: 'Nie',
       cancel: 'Anuluj',
       clear: 'Wyczyść',
       game: 'Gra',
@@ -1666,7 +1680,7 @@ export const MESSAGES: Record<Locale, Messages> = {
           circus: {
             label: 'Cyrk',
             hint: 'całkowicie otoczony = 10',
-            fields: ['Otoczone cyrki'],
+            fields: ['Otoczony'],
           },
           signalman: {
             label: 'Dróżnik',

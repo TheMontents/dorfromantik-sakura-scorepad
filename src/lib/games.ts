@@ -113,7 +113,8 @@ const classic: Game = {
     { id: 'trainStation', fields: [{ factor: 1 }] },
     { id: 'harbour', fields: [{ factor: 1 }] },
     { id: 'redHearts', fields: [{ factor: 1 }] },
-    { id: 'circus', fields: [{ factor: 10 }] },
+    // Box 3 holds exactly one circus tile, so this is a yes or no, not a count
+    { id: 'circus', fields: [{ factor: 10, max: 1 }] },
     { id: 'signalman', fields: [{ factor: 2 }] },
     { id: 'shepherdess', fields: [{ factor: 1 }] },
     { id: 'hill', fields: [{ factor: 2 }] },
