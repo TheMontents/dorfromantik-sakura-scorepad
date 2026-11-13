@@ -1,0 +1,64 @@
+name: CI
+
+# Checks every pull request before it is merged — above all the Renovate PRs,
+# which nobody tests by hand. Without this, a broken dependency update would
+# only surface when the next version tag fails to publish.
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+# A newer push to the same PR makes the older run pointless.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: test and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Same major as the build stage in the Dockerfile, so the tests run on
+      # the Node version that actually builds the image.
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    name: docker build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      # Builds the image without pushing it. Catches what the npm job cannot:
+      # a broken Dockerfile, a base image that went away, an nginx.conf the
+      # new nginx rejects. `--pull` so a Renovate digest bump is really used,
+      # `--load` so the image ends up in the local store even when buildx runs
+      # with a container driver (it otherwise stays in the build cache only).
+      - name: Build image
+        run: docker build --pull --load -t scorepad:ci .
+
+      # The image's own HEALTHCHECK only runs under `docker run`; this is the
+      # same request, made once.
+      - name: Smoke test
+        run: |
+          docker run -d --name scorepad -p 8080:80 scorepad:ci
+          for _ in $(seq 1 15); do
+            if curl -fsS -o /dev/null http://localhost:8080/; then
+              echo "nginx serves the app"
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs scorepad
+          exit 1
