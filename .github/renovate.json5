@@ -54,18 +54,35 @@
       groupName: 'docker base images',
     },
 
-    // Node in the build stage: stay on LTS lines. The odd majors (25, 27 …)
-    // are never LTS and drop out of support within months.
-    {
-      matchManagers: ['dockerfile'],
-      matchPackageNames: ['node'],
-      allowedVersions: '/^\\d*[02468]-/',
-    },
-
     // GitHub Actions in one PR as well.
     {
       matchManagers: ['github-actions'],
       groupName: 'github actions',
+    },
+
+    // Node — the build stage in the Dockerfile and `node-version` in ci.yml.
+    // Matched by depName: the CI entry's packageName is `actions/node-versions`,
+    // which a `matchPackageNames: ['node']` silently misses.
+    //
+    // Stay on LTS lines; the odd majors (25, 27 …) are never LTS. The version
+    // shows up as "26", "26-alpine" or "26.13.1", so the pattern only looks at
+    // the leading major. (A first attempt, /^\d*[02468]-/, matched none of the
+    // candidates and froze the Dockerfile on 24 — tested in a dry run.)
+    {
+      matchManagers: ['dockerfile', 'github-actions'],
+      matchDepNames: ['node'],
+      allowedVersions: '/^v?\\d*[02468](\\D|$)/',
+    },
+    // …and move both together: the CI must test on the Node that builds the
+    // image. In Nov 2026 the major-actions PR lifted ci.yml to 26 while the
+    // Dockerfile stayed on 24. Must stay below the "github actions" rule —
+    // the last matching groupName wins. Digest refreshes of the node image
+    // stay with the other base images.
+    {
+      matchManagers: ['dockerfile', 'github-actions'],
+      matchDepNames: ['node'],
+      matchUpdateTypes: ['major', 'minor', 'patch'],
+      groupName: 'node',
     },
   ],
 }
