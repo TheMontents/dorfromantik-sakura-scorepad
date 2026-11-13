@@ -112,7 +112,7 @@ git push --follow-tags
 `ghcr.io/themontents/dorfromantik-sakura-scorepad` with the exact version, the
 `major.minor` tag and `latest`. Deployments pin the exact version rather than
 `latest`, so that the running version is readable from the compose file and
-Dependabot can bump it; `latest` is there for a quick `docker run` only.
+Renovate can bump it; `latest` is there for a quick `docker run` only.
 
 The server side lives in the [homelab](https://github.com/TheMontents/homelab)
 repository as the `dorfromantik` stack: bump the image tag there, commit, and
