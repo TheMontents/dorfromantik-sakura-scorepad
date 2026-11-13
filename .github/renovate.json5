@@ -1,0 +1,71 @@
+// Renovate — dependency updates for npm, the Dockerfile base images and
+// GitHub Actions.
+//
+// A hobby app without a backend: nothing here is urgent, so updates arrive
+// once a week and the routine ones are bundled. Merging a PR does not ship
+// anything — the image is only built on a version tag, and the homelab stack
+// pins that tag. Hence no automerge.
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    'config:recommended',
+    // Third-party actions pinned to a commit SHA (version kept as a comment):
+    // a tag like `@v3` can be moved to different code after the fact.
+    'helpers:pinGitHubActionDigests',
+  ],
+  timezone: 'Europe/Berlin',
+  schedule: ['before 7am on monday'],
+  labels: ['dependencies'],
+
+  // Refresh package-lock.json once a month, so transitive dependencies don't
+  // drift for years behind the direct ones.
+  lockFileMaintenance: {
+    enabled: true,
+    schedule: ['before 7am on the first day of the month'],
+  },
+
+  packageRules: [
+    // Majors only as a checkbox in the Dependency Dashboard. Vite, Vitest and
+    // Vue majors usually need code changes; a PR that cannot be merged as-is
+    // is just noise.
+    {
+      matchUpdateTypes: ['major'],
+      dependencyDashboardApproval: true,
+    },
+
+    // All non-major npm updates in one PR — they are tested together anyway
+    // (`npm test`, `npm run build`).
+    {
+      matchManagers: ['npm'],
+      matchUpdateTypes: ['minor', 'patch'],
+      groupName: 'npm non-major',
+    },
+
+    // Base images in the Dockerfile: pin to a digest, so a build is
+    // reproducible and `nginx:alpine` (a moving tag without a version) becomes
+    // visible to Renovate at all. Digest refreshes are bundled into one PR.
+    {
+      matchManagers: ['dockerfile'],
+      pinDigests: true,
+    },
+    {
+      matchManagers: ['dockerfile'],
+      matchUpdateTypes: ['digest', 'pin', 'pinDigest', 'minor', 'patch'],
+      groupName: 'docker base images',
+    },
+
+    // Node in the build stage: stay on LTS lines. The odd majors (25, 27 …)
+    // are never LTS and drop out of support within months.
+    {
+      matchManagers: ['dockerfile'],
+      matchPackageNames: ['node'],
+      allowedVersions: '/^\\d*[02468]-/',
+    },
+
+    // GitHub Actions in one PR as well.
+    {
+      matchManagers: ['github-actions'],
+      groupName: 'github actions',
+    },
+  ],
+}
