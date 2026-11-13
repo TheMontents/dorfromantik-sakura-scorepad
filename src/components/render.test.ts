@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { createSSRApp } from 'vue'
 import { renderToString } from 'vue/server-renderer'
 import ScoreTable from './ScoreTable.vue'
@@ -6,6 +6,14 @@ import UnlockList from './UnlockList.vue'
 import { GAMES, GAME_IDS } from '../lib/games'
 import { computeTotals, createEmptySheet } from '../lib/scoring'
 import { MESSAGES } from '../lib/messages'
+import { locale } from '../lib/i18n'
+
+// The expectations below are the German texts. Without this the panels render
+// in whatever language the machine reports - German on a German Mac, English
+// on a CI runner - and the tests pass or fail depending on where they run.
+beforeAll(() => {
+  locale.value = 'de'
+})
 
 /**
  * Renders the two panels for every game. Template lookups such as
