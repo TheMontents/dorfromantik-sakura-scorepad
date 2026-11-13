@@ -1,7 +1,7 @@
 {
   "name": "dorfromantik-sakura-scorepad",
   "private": true,
-  "version": "0.5.1",
+  "version": "0.5.2",
   "type": "module",
   "description": "Digitaler Wertungsblock für Dorfromantik: Das Duell – Sakura",
   "scripts": {
